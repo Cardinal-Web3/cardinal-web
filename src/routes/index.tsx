@@ -1,29 +1,48 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { Nav } from "@/components/site/Nav";
+import { Footer } from "@/components/site/Footer";
+import { Hero } from "@/components/site/Hero";
+import { Problem, HowItWorks } from "@/components/site/Sections1";
+import { ProtectionEngine } from "@/components/site/ProtectionEngine";
+import { SafeSendShowcase, Escrow } from "@/components/site/Sections2";
+import { ThreatMap, Partners, Pilot } from "@/components/site/Sections3";
 
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Your App" },
-      { name: "description", content: "Replace this with a one-sentence description of your app." },
-      { property: "og:title", content: "Your App" },
-      { property: "og:description", content: "Replace this with a one-sentence description of your app." },
+      { title: "Cardinal — Protect Web3 transactions before you sign" },
+      {
+        name: "description",
+        content:
+          "Cardinal is the protection layer between users and blockchain transactions. Scan risk, block scams, and route funds through SafeSend and escrow.",
+      },
+      { property: "og:title", content: "Cardinal — Web3 Transaction Protection" },
+      {
+        property: "og:description",
+        content:
+          "Before you sign, Cardinal scans. Before funds move, Cardinal protects.",
+      },
     ],
   }),
   component: Index,
 });
 
-// IMPORTANT: Replace this placeholder. See ./README.md for routing conventions.
 function Index() {
   return (
-    <div
-      className="flex min-h-screen items-center justify-center"
-      style={{ backgroundColor: "#fcfbf8" }}
-    >
-      <img
-        data-lovable-blank-page-placeholder="REMOVE_THIS"
-        src="https://cdn.gpteng.co/blank-app-v1.svg"
-        alt="Your app will live here!"
-      />
+    <div className="relative min-h-screen overflow-hidden">
+      <Nav />
+      <main>
+        <Hero />
+        <Problem />
+        <HowItWorks />
+        <ProtectionEngine />
+        <SafeSendShowcase />
+        <Escrow />
+        <ThreatMap />
+        <Partners />
+        <Pilot />
+      </main>
+      <Footer />
     </div>
   );
 }

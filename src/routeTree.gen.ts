@@ -9,38 +9,202 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as SafesendRouteImport } from './routes/safesend'
+import { Route as PilotRouteImport } from './routes/pilot'
+import { Route as PartnersRouteImport } from './routes/partners'
+import { Route as AppRouteImport } from './routes/app'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AppIndexRouteImport } from './routes/app.index'
+import { Route as AppNewRouteImport } from './routes/app.new'
+import { Route as AppNewIndexRouteImport } from './routes/app.new.index'
+import { Route as AppNewVerdictRouteImport } from './routes/app.new.verdict'
+import { Route as AppNewScanRouteImport } from './routes/app.new.scan'
+import { Route as AppNewConfirmRouteImport } from './routes/app.new.confirm'
+import { Route as AppNewReceiptIdRouteImport } from './routes/app.new.receipt.$id'
 
+const SafesendRoute = SafesendRouteImport.update({
+  id: '/safesend',
+  path: '/safesend',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PilotRoute = PilotRouteImport.update({
+  id: '/pilot',
+  path: '/pilot',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PartnersRoute = PartnersRouteImport.update({
+  id: '/partners',
+  path: '/partners',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AppRoute = AppRouteImport.update({
+  id: '/app',
+  path: '/app',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AppIndexRoute = AppIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppNewRoute = AppNewRouteImport.update({
+  id: '/new',
+  path: '/new',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppNewIndexRoute = AppNewIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => AppNewRoute,
+} as any)
+const AppNewVerdictRoute = AppNewVerdictRouteImport.update({
+  id: '/verdict',
+  path: '/verdict',
+  getParentRoute: () => AppNewRoute,
+} as any)
+const AppNewScanRoute = AppNewScanRouteImport.update({
+  id: '/scan',
+  path: '/scan',
+  getParentRoute: () => AppNewRoute,
+} as any)
+const AppNewConfirmRoute = AppNewConfirmRouteImport.update({
+  id: '/confirm',
+  path: '/confirm',
+  getParentRoute: () => AppNewRoute,
+} as any)
+const AppNewReceiptIdRoute = AppNewReceiptIdRouteImport.update({
+  id: '/receipt/$id',
+  path: '/receipt/$id',
+  getParentRoute: () => AppNewRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/app': typeof AppRouteWithChildren
+  '/partners': typeof PartnersRoute
+  '/pilot': typeof PilotRoute
+  '/safesend': typeof SafesendRoute
+  '/app/new': typeof AppNewRouteWithChildren
+  '/app/': typeof AppIndexRoute
+  '/app/new/confirm': typeof AppNewConfirmRoute
+  '/app/new/scan': typeof AppNewScanRoute
+  '/app/new/verdict': typeof AppNewVerdictRoute
+  '/app/new/': typeof AppNewIndexRoute
+  '/app/new/receipt/$id': typeof AppNewReceiptIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/partners': typeof PartnersRoute
+  '/pilot': typeof PilotRoute
+  '/safesend': typeof SafesendRoute
+  '/app': typeof AppIndexRoute
+  '/app/new/confirm': typeof AppNewConfirmRoute
+  '/app/new/scan': typeof AppNewScanRoute
+  '/app/new/verdict': typeof AppNewVerdictRoute
+  '/app/new': typeof AppNewIndexRoute
+  '/app/new/receipt/$id': typeof AppNewReceiptIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/app': typeof AppRouteWithChildren
+  '/partners': typeof PartnersRoute
+  '/pilot': typeof PilotRoute
+  '/safesend': typeof SafesendRoute
+  '/app/new': typeof AppNewRouteWithChildren
+  '/app/': typeof AppIndexRoute
+  '/app/new/confirm': typeof AppNewConfirmRoute
+  '/app/new/scan': typeof AppNewScanRoute
+  '/app/new/verdict': typeof AppNewVerdictRoute
+  '/app/new/': typeof AppNewIndexRoute
+  '/app/new/receipt/$id': typeof AppNewReceiptIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths:
+    | '/'
+    | '/app'
+    | '/partners'
+    | '/pilot'
+    | '/safesend'
+    | '/app/new'
+    | '/app/'
+    | '/app/new/confirm'
+    | '/app/new/scan'
+    | '/app/new/verdict'
+    | '/app/new/'
+    | '/app/new/receipt/$id'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to:
+    | '/'
+    | '/partners'
+    | '/pilot'
+    | '/safesend'
+    | '/app'
+    | '/app/new/confirm'
+    | '/app/new/scan'
+    | '/app/new/verdict'
+    | '/app/new'
+    | '/app/new/receipt/$id'
+  id:
+    | '__root__'
+    | '/'
+    | '/app'
+    | '/partners'
+    | '/pilot'
+    | '/safesend'
+    | '/app/new'
+    | '/app/'
+    | '/app/new/confirm'
+    | '/app/new/scan'
+    | '/app/new/verdict'
+    | '/app/new/'
+    | '/app/new/receipt/$id'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AppRoute: typeof AppRouteWithChildren
+  PartnersRoute: typeof PartnersRoute
+  PilotRoute: typeof PilotRoute
+  SafesendRoute: typeof SafesendRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/safesend': {
+      id: '/safesend'
+      path: '/safesend'
+      fullPath: '/safesend'
+      preLoaderRoute: typeof SafesendRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/pilot': {
+      id: '/pilot'
+      path: '/pilot'
+      fullPath: '/pilot'
+      preLoaderRoute: typeof PilotRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/partners': {
+      id: '/partners'
+      path: '/partners'
+      fullPath: '/partners'
+      preLoaderRoute: typeof PartnersRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/app': {
+      id: '/app'
+      path: '/app'
+      fullPath: '/app'
+      preLoaderRoute: typeof AppRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
@@ -48,22 +212,96 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/app/': {
+      id: '/app/'
+      path: '/'
+      fullPath: '/app/'
+      preLoaderRoute: typeof AppIndexRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/new': {
+      id: '/app/new'
+      path: '/new'
+      fullPath: '/app/new'
+      preLoaderRoute: typeof AppNewRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/new/': {
+      id: '/app/new/'
+      path: '/'
+      fullPath: '/app/new/'
+      preLoaderRoute: typeof AppNewIndexRouteImport
+      parentRoute: typeof AppNewRoute
+    }
+    '/app/new/verdict': {
+      id: '/app/new/verdict'
+      path: '/verdict'
+      fullPath: '/app/new/verdict'
+      preLoaderRoute: typeof AppNewVerdictRouteImport
+      parentRoute: typeof AppNewRoute
+    }
+    '/app/new/scan': {
+      id: '/app/new/scan'
+      path: '/scan'
+      fullPath: '/app/new/scan'
+      preLoaderRoute: typeof AppNewScanRouteImport
+      parentRoute: typeof AppNewRoute
+    }
+    '/app/new/confirm': {
+      id: '/app/new/confirm'
+      path: '/confirm'
+      fullPath: '/app/new/confirm'
+      preLoaderRoute: typeof AppNewConfirmRouteImport
+      parentRoute: typeof AppNewRoute
+    }
+    '/app/new/receipt/$id': {
+      id: '/app/new/receipt/$id'
+      path: '/receipt/$id'
+      fullPath: '/app/new/receipt/$id'
+      preLoaderRoute: typeof AppNewReceiptIdRouteImport
+      parentRoute: typeof AppNewRoute
+    }
   }
 }
 
+interface AppNewRouteChildren {
+  AppNewConfirmRoute: typeof AppNewConfirmRoute
+  AppNewScanRoute: typeof AppNewScanRoute
+  AppNewVerdictRoute: typeof AppNewVerdictRoute
+  AppNewIndexRoute: typeof AppNewIndexRoute
+  AppNewReceiptIdRoute: typeof AppNewReceiptIdRoute
+}
+
+const AppNewRouteChildren: AppNewRouteChildren = {
+  AppNewConfirmRoute: AppNewConfirmRoute,
+  AppNewScanRoute: AppNewScanRoute,
+  AppNewVerdictRoute: AppNewVerdictRoute,
+  AppNewIndexRoute: AppNewIndexRoute,
+  AppNewReceiptIdRoute: AppNewReceiptIdRoute,
+}
+
+const AppNewRouteWithChildren =
+  AppNewRoute._addFileChildren(AppNewRouteChildren)
+
+interface AppRouteChildren {
+  AppNewRoute: typeof AppNewRouteWithChildren
+  AppIndexRoute: typeof AppIndexRoute
+}
+
+const AppRouteChildren: AppRouteChildren = {
+  AppNewRoute: AppNewRouteWithChildren,
+  AppIndexRoute: AppIndexRoute,
+}
+
+const AppRouteWithChildren = AppRoute._addFileChildren(AppRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AppRoute: AppRouteWithChildren,
+  PartnersRoute: PartnersRoute,
+  PilotRoute: PilotRoute,
+  SafesendRoute: SafesendRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}
