@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as SafesendRouteImport } from './routes/safesend'
 import { Route as PilotRouteImport } from './routes/pilot'
 import { Route as PartnersRouteImport } from './routes/partners'
+import { Route as AppRouteImport } from './routes/app'
 import { Route as IndexRouteImport } from './routes/index'
 
 const SafesendRoute = SafesendRouteImport.update({
@@ -29,6 +30,11 @@ const PartnersRoute = PartnersRouteImport.update({
   path: '/partners',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AppRoute = AppRouteImport.update({
+  id: '/app',
+  path: '/app',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
@@ -37,12 +43,14 @@ const IndexRoute = IndexRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/app': typeof AppRoute
   '/partners': typeof PartnersRoute
   '/pilot': typeof PilotRoute
   '/safesend': typeof SafesendRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/app': typeof AppRoute
   '/partners': typeof PartnersRoute
   '/pilot': typeof PilotRoute
   '/safesend': typeof SafesendRoute
@@ -50,20 +58,22 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/app': typeof AppRoute
   '/partners': typeof PartnersRoute
   '/pilot': typeof PilotRoute
   '/safesend': typeof SafesendRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/partners' | '/pilot' | '/safesend'
+  fullPaths: '/' | '/app' | '/partners' | '/pilot' | '/safesend'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/partners' | '/pilot' | '/safesend'
-  id: '__root__' | '/' | '/partners' | '/pilot' | '/safesend'
+  to: '/' | '/app' | '/partners' | '/pilot' | '/safesend'
+  id: '__root__' | '/' | '/app' | '/partners' | '/pilot' | '/safesend'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AppRoute: typeof AppRoute
   PartnersRoute: typeof PartnersRoute
   PilotRoute: typeof PilotRoute
   SafesendRoute: typeof SafesendRoute
@@ -92,6 +102,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PartnersRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/app': {
+      id: '/app'
+      path: '/app'
+      fullPath: '/app'
+      preLoaderRoute: typeof AppRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
@@ -104,6 +121,7 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AppRoute: AppRoute,
   PartnersRoute: PartnersRoute,
   PilotRoute: PilotRoute,
   SafesendRoute: SafesendRoute,
