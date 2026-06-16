@@ -16,6 +16,11 @@ import { Route as AppRouteImport } from './routes/app'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AppIndexRouteImport } from './routes/app.index'
 import { Route as AppNewRouteImport } from './routes/app.new'
+import { Route as AppNewIndexRouteImport } from './routes/app.new.index'
+import { Route as AppNewVerdictRouteImport } from './routes/app.new.verdict'
+import { Route as AppNewScanRouteImport } from './routes/app.new.scan'
+import { Route as AppNewConfirmRouteImport } from './routes/app.new.confirm'
+import { Route as AppNewReceiptIdRouteImport } from './routes/app.new.receipt.$id'
 
 const SafesendRoute = SafesendRouteImport.update({
   id: '/safesend',
@@ -52,6 +57,31 @@ const AppNewRoute = AppNewRouteImport.update({
   path: '/new',
   getParentRoute: () => AppRoute,
 } as any)
+const AppNewIndexRoute = AppNewIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => AppNewRoute,
+} as any)
+const AppNewVerdictRoute = AppNewVerdictRouteImport.update({
+  id: '/verdict',
+  path: '/verdict',
+  getParentRoute: () => AppNewRoute,
+} as any)
+const AppNewScanRoute = AppNewScanRouteImport.update({
+  id: '/scan',
+  path: '/scan',
+  getParentRoute: () => AppNewRoute,
+} as any)
+const AppNewConfirmRoute = AppNewConfirmRouteImport.update({
+  id: '/confirm',
+  path: '/confirm',
+  getParentRoute: () => AppNewRoute,
+} as any)
+const AppNewReceiptIdRoute = AppNewReceiptIdRouteImport.update({
+  id: '/receipt/$id',
+  path: '/receipt/$id',
+  getParentRoute: () => AppNewRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -59,16 +89,25 @@ export interface FileRoutesByFullPath {
   '/partners': typeof PartnersRoute
   '/pilot': typeof PilotRoute
   '/safesend': typeof SafesendRoute
-  '/app/new': typeof AppNewRoute
+  '/app/new': typeof AppNewRouteWithChildren
   '/app/': typeof AppIndexRoute
+  '/app/new/confirm': typeof AppNewConfirmRoute
+  '/app/new/scan': typeof AppNewScanRoute
+  '/app/new/verdict': typeof AppNewVerdictRoute
+  '/app/new/': typeof AppNewIndexRoute
+  '/app/new/receipt/$id': typeof AppNewReceiptIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/partners': typeof PartnersRoute
   '/pilot': typeof PilotRoute
   '/safesend': typeof SafesendRoute
-  '/app/new': typeof AppNewRoute
   '/app': typeof AppIndexRoute
+  '/app/new/confirm': typeof AppNewConfirmRoute
+  '/app/new/scan': typeof AppNewScanRoute
+  '/app/new/verdict': typeof AppNewVerdictRoute
+  '/app/new': typeof AppNewIndexRoute
+  '/app/new/receipt/$id': typeof AppNewReceiptIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -77,8 +116,13 @@ export interface FileRoutesById {
   '/partners': typeof PartnersRoute
   '/pilot': typeof PilotRoute
   '/safesend': typeof SafesendRoute
-  '/app/new': typeof AppNewRoute
+  '/app/new': typeof AppNewRouteWithChildren
   '/app/': typeof AppIndexRoute
+  '/app/new/confirm': typeof AppNewConfirmRoute
+  '/app/new/scan': typeof AppNewScanRoute
+  '/app/new/verdict': typeof AppNewVerdictRoute
+  '/app/new/': typeof AppNewIndexRoute
+  '/app/new/receipt/$id': typeof AppNewReceiptIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -90,8 +134,23 @@ export interface FileRouteTypes {
     | '/safesend'
     | '/app/new'
     | '/app/'
+    | '/app/new/confirm'
+    | '/app/new/scan'
+    | '/app/new/verdict'
+    | '/app/new/'
+    | '/app/new/receipt/$id'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/partners' | '/pilot' | '/safesend' | '/app/new' | '/app'
+  to:
+    | '/'
+    | '/partners'
+    | '/pilot'
+    | '/safesend'
+    | '/app'
+    | '/app/new/confirm'
+    | '/app/new/scan'
+    | '/app/new/verdict'
+    | '/app/new'
+    | '/app/new/receipt/$id'
   id:
     | '__root__'
     | '/'
@@ -101,6 +160,11 @@ export interface FileRouteTypes {
     | '/safesend'
     | '/app/new'
     | '/app/'
+    | '/app/new/confirm'
+    | '/app/new/scan'
+    | '/app/new/verdict'
+    | '/app/new/'
+    | '/app/new/receipt/$id'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -162,16 +226,70 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppNewRouteImport
       parentRoute: typeof AppRoute
     }
+    '/app/new/': {
+      id: '/app/new/'
+      path: '/'
+      fullPath: '/app/new/'
+      preLoaderRoute: typeof AppNewIndexRouteImport
+      parentRoute: typeof AppNewRoute
+    }
+    '/app/new/verdict': {
+      id: '/app/new/verdict'
+      path: '/verdict'
+      fullPath: '/app/new/verdict'
+      preLoaderRoute: typeof AppNewVerdictRouteImport
+      parentRoute: typeof AppNewRoute
+    }
+    '/app/new/scan': {
+      id: '/app/new/scan'
+      path: '/scan'
+      fullPath: '/app/new/scan'
+      preLoaderRoute: typeof AppNewScanRouteImport
+      parentRoute: typeof AppNewRoute
+    }
+    '/app/new/confirm': {
+      id: '/app/new/confirm'
+      path: '/confirm'
+      fullPath: '/app/new/confirm'
+      preLoaderRoute: typeof AppNewConfirmRouteImport
+      parentRoute: typeof AppNewRoute
+    }
+    '/app/new/receipt/$id': {
+      id: '/app/new/receipt/$id'
+      path: '/receipt/$id'
+      fullPath: '/app/new/receipt/$id'
+      preLoaderRoute: typeof AppNewReceiptIdRouteImport
+      parentRoute: typeof AppNewRoute
+    }
   }
 }
 
+interface AppNewRouteChildren {
+  AppNewConfirmRoute: typeof AppNewConfirmRoute
+  AppNewScanRoute: typeof AppNewScanRoute
+  AppNewVerdictRoute: typeof AppNewVerdictRoute
+  AppNewIndexRoute: typeof AppNewIndexRoute
+  AppNewReceiptIdRoute: typeof AppNewReceiptIdRoute
+}
+
+const AppNewRouteChildren: AppNewRouteChildren = {
+  AppNewConfirmRoute: AppNewConfirmRoute,
+  AppNewScanRoute: AppNewScanRoute,
+  AppNewVerdictRoute: AppNewVerdictRoute,
+  AppNewIndexRoute: AppNewIndexRoute,
+  AppNewReceiptIdRoute: AppNewReceiptIdRoute,
+}
+
+const AppNewRouteWithChildren =
+  AppNewRoute._addFileChildren(AppNewRouteChildren)
+
 interface AppRouteChildren {
-  AppNewRoute: typeof AppNewRoute
+  AppNewRoute: typeof AppNewRouteWithChildren
   AppIndexRoute: typeof AppIndexRoute
 }
 
 const AppRouteChildren: AppRouteChildren = {
-  AppNewRoute: AppNewRoute,
+  AppNewRoute: AppNewRouteWithChildren,
   AppIndexRoute: AppIndexRoute,
 }
 
