@@ -14,6 +14,8 @@ import { Route as PilotRouteImport } from './routes/pilot'
 import { Route as PartnersRouteImport } from './routes/partners'
 import { Route as AppRouteImport } from './routes/app'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AppIndexRouteImport } from './routes/app.index'
+import { Route as AppNewRouteImport } from './routes/app.new'
 
 const SafesendRoute = SafesendRouteImport.update({
   id: '/safesend',
@@ -40,40 +42,70 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AppIndexRoute = AppIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppNewRoute = AppNewRouteImport.update({
+  id: '/new',
+  path: '/new',
+  getParentRoute: () => AppRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
-  '/app': typeof AppRoute
+  '/app': typeof AppRouteWithChildren
   '/partners': typeof PartnersRoute
   '/pilot': typeof PilotRoute
   '/safesend': typeof SafesendRoute
+  '/app/new': typeof AppNewRoute
+  '/app/': typeof AppIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
-  '/app': typeof AppRoute
   '/partners': typeof PartnersRoute
   '/pilot': typeof PilotRoute
   '/safesend': typeof SafesendRoute
+  '/app/new': typeof AppNewRoute
+  '/app': typeof AppIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
-  '/app': typeof AppRoute
+  '/app': typeof AppRouteWithChildren
   '/partners': typeof PartnersRoute
   '/pilot': typeof PilotRoute
   '/safesend': typeof SafesendRoute
+  '/app/new': typeof AppNewRoute
+  '/app/': typeof AppIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/app' | '/partners' | '/pilot' | '/safesend'
+  fullPaths:
+    | '/'
+    | '/app'
+    | '/partners'
+    | '/pilot'
+    | '/safesend'
+    | '/app/new'
+    | '/app/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/app' | '/partners' | '/pilot' | '/safesend'
-  id: '__root__' | '/' | '/app' | '/partners' | '/pilot' | '/safesend'
+  to: '/' | '/partners' | '/pilot' | '/safesend' | '/app/new' | '/app'
+  id:
+    | '__root__'
+    | '/'
+    | '/app'
+    | '/partners'
+    | '/pilot'
+    | '/safesend'
+    | '/app/new'
+    | '/app/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
-  AppRoute: typeof AppRoute
+  AppRoute: typeof AppRouteWithChildren
   PartnersRoute: typeof PartnersRoute
   PilotRoute: typeof PilotRoute
   SafesendRoute: typeof SafesendRoute
@@ -116,12 +148,38 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/app/': {
+      id: '/app/'
+      path: '/'
+      fullPath: '/app/'
+      preLoaderRoute: typeof AppIndexRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/new': {
+      id: '/app/new'
+      path: '/new'
+      fullPath: '/app/new'
+      preLoaderRoute: typeof AppNewRouteImport
+      parentRoute: typeof AppRoute
+    }
   }
 }
 
+interface AppRouteChildren {
+  AppNewRoute: typeof AppNewRoute
+  AppIndexRoute: typeof AppIndexRoute
+}
+
+const AppRouteChildren: AppRouteChildren = {
+  AppNewRoute: AppNewRoute,
+  AppIndexRoute: AppIndexRoute,
+}
+
+const AppRouteWithChildren = AppRoute._addFileChildren(AppRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
-  AppRoute: AppRoute,
+  AppRoute: AppRouteWithChildren,
   PartnersRoute: PartnersRoute,
   PilotRoute: PilotRoute,
   SafesendRoute: SafesendRoute,
