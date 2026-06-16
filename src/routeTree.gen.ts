@@ -9,8 +9,26 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as SafesendRouteImport } from './routes/safesend'
+import { Route as PilotRouteImport } from './routes/pilot'
+import { Route as PartnersRouteImport } from './routes/partners'
 import { Route as IndexRouteImport } from './routes/index'
 
+const SafesendRoute = SafesendRouteImport.update({
+  id: '/safesend',
+  path: '/safesend',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PilotRoute = PilotRouteImport.update({
+  id: '/pilot',
+  path: '/pilot',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PartnersRoute = PartnersRouteImport.update({
+  id: '/partners',
+  path: '/partners',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
@@ -19,28 +37,61 @@ const IndexRoute = IndexRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/partners': typeof PartnersRoute
+  '/pilot': typeof PilotRoute
+  '/safesend': typeof SafesendRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/partners': typeof PartnersRoute
+  '/pilot': typeof PilotRoute
+  '/safesend': typeof SafesendRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/partners': typeof PartnersRoute
+  '/pilot': typeof PilotRoute
+  '/safesend': typeof SafesendRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths: '/' | '/partners' | '/pilot' | '/safesend'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to: '/' | '/partners' | '/pilot' | '/safesend'
+  id: '__root__' | '/' | '/partners' | '/pilot' | '/safesend'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  PartnersRoute: typeof PartnersRoute
+  PilotRoute: typeof PilotRoute
+  SafesendRoute: typeof SafesendRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/safesend': {
+      id: '/safesend'
+      path: '/safesend'
+      fullPath: '/safesend'
+      preLoaderRoute: typeof SafesendRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/pilot': {
+      id: '/pilot'
+      path: '/pilot'
+      fullPath: '/pilot'
+      preLoaderRoute: typeof PilotRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/partners': {
+      id: '/partners'
+      path: '/partners'
+      fullPath: '/partners'
+      preLoaderRoute: typeof PartnersRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
@@ -53,6 +104,9 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  PartnersRoute: PartnersRoute,
+  PilotRoute: PilotRoute,
+  SafesendRoute: SafesendRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
