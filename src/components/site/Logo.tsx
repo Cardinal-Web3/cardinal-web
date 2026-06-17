@@ -3,22 +3,14 @@ import { Link } from "@tanstack/react-router";
 export function Logo({ className = "" }: { className?: string }) {
   return (
     <Link to="/" className={`group inline-flex items-center gap-2.5 ${className}`}>
-      <span className="relative inline-flex h-7 w-7 items-center justify-center">
-        <span className="absolute inset-0 rounded-md bg-gradient-to-br from-cyan to-violet opacity-90" />
-        <span className="absolute inset-[2px] rounded-[5px] bg-background" />
-        <svg
-          viewBox="0 0 24 24"
-          className="relative h-4 w-4 text-cyan"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth={2}
-          strokeLinecap="round"
-          strokeLinejoin="round"
-        >
-          <path d="M12 2 4 6v6c0 5 3.5 8.5 8 10 4.5-1.5 8-5 8-10V6l-8-4Z" />
+      <span className="relative inline-flex h-6 w-6 items-center justify-center">
+        <svg viewBox="0 0 24 24" className="h-6 w-6 text-lime">
+          <circle cx="12" cy="12" r="9.5" fill="none" stroke="currentColor" strokeWidth="1.5" />
+          <circle cx="12" cy="12" r="3.5" fill="currentColor" />
+          <path d="M12 2.5 V 7" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
         </svg>
       </span>
-      <span className="font-display text-[17px] tracking-tight text-foreground">
+      <span className="font-display text-[15px] font-medium tracking-[-0.01em] text-foreground">
         Cardinal
       </span>
     </Link>
