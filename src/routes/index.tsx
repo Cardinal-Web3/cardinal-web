@@ -2,25 +2,23 @@ import { createFileRoute } from "@tanstack/react-router";
 import { Nav } from "@/components/site/Nav";
 import { Footer } from "@/components/site/Footer";
 import { Hero } from "@/components/site/Hero";
-import { Problem, HowItWorks } from "@/components/site/Sections1";
-import { ProtectionEngine } from "@/components/site/ProtectionEngine";
+import { Problem, InterceptionEngine } from "@/components/site/Sections1";
 import { SafeSendShowcase, Escrow } from "@/components/site/Sections2";
 import { ThreatMap, Partners, Pilot } from "@/components/site/Sections3";
 
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Cardinal — Protect Web3 transactions before you sign" },
+      { title: "Cardinal — The security OS for blockchain transactions" },
       {
         name: "description",
         content:
-          "Cardinal is the protection layer between users and blockchain transactions. Scan risk, block scams, and route funds through SafeSend and escrow.",
+          "Cardinal intercepts blockchain transactions before they sign. Scan risk, route SafeSend, and quarantine threats at the protection layer.",
       },
-      { property: "og:title", content: "Cardinal — Web3 Transaction Protection" },
+      { property: "og:title", content: "Cardinal — Transaction Interception Engine" },
       {
         property: "og:description",
-        content:
-          "Before you sign, Cardinal scans. Before funds move, Cardinal protects.",
+        content: "Intercept the transaction. Before it signs.",
       },
     ],
   }),
@@ -34,8 +32,7 @@ function Index() {
       <main>
         <Hero />
         <Problem />
-        <HowItWorks />
-        <ProtectionEngine />
+        <InterceptionEngine />
         <SafeSendShowcase />
         <Escrow />
         <ThreatMap />

@@ -19,29 +19,37 @@ function Layout() {
     STEPS.findIndex((s) => pathname === s.to || (s.to !== "/app/new" && pathname.startsWith(s.to))),
   );
   return (
-    <div className="mx-auto max-w-3xl">
-      <div className="flex items-center justify-between">
-        <div>
-          <div className="eyebrow mb-1">Create SafeSend</div>
-          <div className="font-mono text-[12px] text-muted-foreground">
-            step {String(idx + 1).padStart(2, "0")} / {String(STEPS.length).padStart(2, "0")} · {STEPS[idx]?.label}
-          </div>
+    <div className="relative mx-auto max-w-[900px]">
+      {/* giant step label behind */}
+      <div className="pointer-events-none absolute -top-4 left-0 right-0 select-none text-center">
+        <div className="wordmark-giant text-[clamp(120px,22vw,260px)] text-foreground/[0.035]">
+          {String(idx + 1).padStart(2, "0")}
         </div>
-        <Link to="/app" className="text-[12.5px] text-muted-foreground hover:text-foreground">
+      </div>
+
+      <div className="relative flex items-center justify-between">
+        <div className="font-mono text-[11px] uppercase tracking-[0.22em] text-muted-foreground">
+          step {String(idx + 1).padStart(2, "0")} / {String(STEPS.length).padStart(2, "0")} ·{" "}
+          <span className="text-lime">{STEPS[idx]?.label}</span>
+        </div>
+        <Link
+          to="/app"
+          className="font-mono text-[10.5px] uppercase tracking-[0.22em] text-muted-foreground hover:text-foreground"
+        >
           ← My SafeSends
         </Link>
       </div>
-      <div className="mt-4 grid grid-cols-5 gap-1.5">
+      <div className="relative mt-4 grid grid-cols-5 gap-1.5">
         {STEPS.map((s, i) => (
           <div
             key={s.to}
-            className={`h-1 rounded-full transition ${
-              i <= idx ? "bg-gradient-to-r from-cyan to-violet" : "bg-[var(--border)]"
+            className={`h-[2px] rounded-full transition ${
+              i <= idx ? "bg-lime shadow-[0_0_10px_oklch(0.92_0.18_115/0.6)]" : "bg-[var(--border)]"
             }`}
           />
         ))}
       </div>
-      <div className="mt-10">
+      <div className="relative mt-16">
         <Outlet />
       </div>
     </div>
