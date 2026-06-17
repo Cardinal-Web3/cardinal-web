@@ -1,202 +1,175 @@
-import { motion } from "motion/react";
 import { Link } from "@tanstack/react-router";
+import { motion } from "motion/react";
+import { GlassPanel } from "./GlassPanel";
 
 export function SafeSendShowcase() {
   return (
-    <section id="safesend" className="relative px-6 py-28">
-      <div className="mx-auto grid max-w-6xl gap-12 md:grid-cols-[1fr_1.1fr] md:items-center">
-        <motion.div
-          initial={{ opacity: 0, y: 18 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.6 }}
-        >
-          <div className="eyebrow mb-4">SafeSend</div>
-          <h2 className="font-display text-balance text-[clamp(34px,5vw,60px)] leading-[1] tracking-[-0.03em]">
-            A transfer
-            <br />
-            you can take back.
-          </h2>
-          <p className="mt-5 max-w-lg text-[16px] leading-relaxed text-muted-foreground">
-            SafeSend locks funds the moment you sign and releases them on a delay
-            you control. If something looks wrong — a spoofed address, a drained
-            wallet, a wrong network — cancel before settlement.
-          </p>
-          <ul className="mt-7 space-y-3 text-[14px]">
-            {[
-              "Locked → delayed release → on-chain settlement",
-              "Configurable cancel window from 15 min to 72 h",
-              "Recipient sees pending balance, cannot pull early",
-              "Cancel triggers full refund minus base gas",
-            ].map((t) => (
-              <li key={t} className="flex items-start gap-3">
-                <span className="mt-1.5 inline-flex h-1.5 w-1.5 flex-none rounded-full bg-emerald shadow-[0_0_10px_oklch(0.76_0.16_155)]" />
-                <span className="text-foreground/85">{t}</span>
-              </li>
-            ))}
-          </ul>
-          <div className="mt-9 flex gap-3">
-            <Link
-              to="/app/new"
-              className="inline-flex items-center gap-2 rounded-full bg-foreground px-5 py-2.5 text-[13.5px] font-medium text-background transition hover:bg-cyan"
+    <section id="safesend" className="relative overflow-hidden px-6 py-32">
+      <div className="mx-auto max-w-[1400px]">
+        <div className="font-mono text-[11px] uppercase tracking-[0.22em] text-muted-foreground">
+          03 / SafeSend
+        </div>
+
+        <div className="relative mt-10">
+          {/* giant background wordmark */}
+          <div className="pointer-events-none absolute inset-x-0 -top-6 z-0 select-none text-center">
+            <div className="wordmark-giant text-foreground/[0.045]">SafeSend.</div>
+          </div>
+
+          <div className="relative z-10 grid items-center gap-12 md:grid-cols-[1fr_1.05fr]">
+            <motion.div
+              initial={{ opacity: 0, y: 24 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.8 }}
+              className="max-w-md"
             >
-              Create SafeSend →
-            </Link>
-            <Link
-              to="/safesend"
-              className="inline-flex items-center gap-2 rounded-full border border-[var(--border-strong)] bg-surface-elevated px-5 py-2.5 text-[13.5px] transition hover:border-cyan hover:text-cyan"
-            >
-              Read the docs
-            </Link>
-          </div>
-        </motion.div>
-
-        <motion.div
-          initial={{ opacity: 0, y: 24, scale: 0.98 }}
-          whileInView={{ opacity: 1, y: 0, scale: 1 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.7 }}
-          className="surface-card relative overflow-hidden p-6"
-        >
-          <div className="flex items-center justify-between">
-            <div className="eyebrow">SafeSend · draft</div>
-            <div className="inline-flex items-center gap-1.5 rounded-full border border-emerald/40 bg-emerald/10 px-2.5 py-1 text-[10.5px] text-emerald">
-              <span className="inline-flex h-1.5 w-1.5 rounded-full bg-emerald shadow-[0_0_8px_oklch(0.76_0.16_155)]" />
-              Verdict: Allow
-            </div>
-          </div>
-
-          <div className="mt-6 space-y-4">
-            <Field label="Recipient">
-              <div className="font-mono text-[13.5px] text-foreground">0x7c8b3F2a…6c3b5D9E2a14</div>
-              <div className="mt-0.5 font-mono text-[11px] text-muted-foreground">
-                trusted · 84 prior settlements
+              <h2 className="wordmark-display text-balance">
+                A transfer
+                <br />
+                you can <span className="text-lime">take back.</span>
+              </h2>
+              <p className="mt-6 text-[15px] leading-relaxed text-muted-foreground">
+                Funds lock on signature, release on a delay you control. If
+                anything looks wrong before settlement — cancel.
+              </p>
+              <div className="mt-9 flex gap-3">
+                <Link
+                  to="/app/new"
+                  className="rounded-md bg-lime px-5 py-3 font-mono text-[11.5px] uppercase tracking-[0.18em] text-background transition hover:opacity-90"
+                >
+                  Create SafeSend →
+                </Link>
+                <Link
+                  to="/safesend"
+                  className="rounded-md border border-[var(--border-strong)] bg-surface/40 px-5 py-3 font-mono text-[11.5px] uppercase tracking-[0.18em] backdrop-blur transition hover:border-lime hover:text-lime"
+                >
+                  Read docs
+                </Link>
               </div>
-            </Field>
-            <div className="grid grid-cols-2 gap-3">
-              <Field label="Token">
-                <div className="text-[14px]">USDC</div>
-              </Field>
-              <Field label="Amount">
-                <div className="text-[14px]">
-                  2,400.00 <span className="text-muted-foreground">USDC</span>
-                </div>
-                <div className="mt-0.5 font-mono text-[11px] text-muted-foreground">
-                  ≈ $2,400.00
-                </div>
-              </Field>
-            </div>
+            </motion.div>
 
-            <Field label="Delay">
-              <div className="flex items-center gap-3">
-                <div className="relative h-1 flex-1 overflow-hidden rounded-full bg-[var(--border)]">
-                  <div className="h-full w-[55%] rounded-full bg-gradient-to-r from-cyan to-violet" />
+            <GlassPanel tilt="left">
+              <div className="p-7">
+                <div className="flex items-center justify-between">
+                  <div className="font-mono text-[10.5px] uppercase tracking-[0.22em] text-muted-foreground">
+                    safesend // draft
+                  </div>
+                  <div className="inline-flex items-center gap-1.5 rounded-md border border-emerald/40 bg-emerald/10 px-2 py-0.5 font-mono text-[10px] uppercase tracking-wider text-emerald">
+                    <span className="inline-flex h-1.5 w-1.5 rounded-full bg-emerald" />
+                    ALLOW
+                  </div>
                 </div>
-                <div className="font-mono text-[12px]">24h</div>
+
+                <div className="mt-6 space-y-5">
+                  <Row label="Recipient" mono>
+                    0x7c8b3F2a…6c3b5D9E2a14
+                  </Row>
+                  <div className="grid grid-cols-2 gap-5">
+                    <Row label="Token">USDC</Row>
+                    <Row label="Amount" mono>2,400.00</Row>
+                  </div>
+                  <div>
+                    <div className="eyebrow mb-3">Release delay</div>
+                    <div className="flex items-center gap-3">
+                      <div className="relative h-[3px] flex-1 overflow-hidden rounded-full bg-[var(--border)]">
+                        <div className="h-full w-[55%] rounded-full bg-lime shadow-[0_0_12px_oklch(0.92_0.18_115)]" />
+                      </div>
+                      <div className="font-mono text-[12px] text-lime">24h</div>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="mt-7 flex items-center justify-between border-t border-[var(--glass-stroke)] pt-5">
+                  <div className="font-mono text-[10.5px] uppercase tracking-wider text-muted-foreground">
+                    releases · tomorrow 14:32
+                  </div>
+                  <button className="rounded-md bg-foreground px-4 py-2 font-mono text-[10.5px] uppercase tracking-[0.18em] text-background">
+                    Sign & lock
+                  </button>
+                </div>
               </div>
-            </Field>
-
-            <div className="grid grid-cols-3 gap-3">
-              <Field label="Gas est.">
-                <div className="font-mono text-[12.5px]">0.0021 ETH</div>
-              </Field>
-              <Field label="Release">
-                <div className="font-mono text-[12.5px]">tomorrow 14:32</div>
-              </Field>
-              <Field label="Cancel window">
-                <div className="font-mono text-[12.5px] text-amber">23h 58m</div>
-              </Field>
-            </div>
+            </GlassPanel>
           </div>
-
-          <div className="mt-6 flex items-center justify-between rounded-xl border border-[var(--border)] bg-[oklch(0.17_0.011_250)] px-4 py-3">
-            <div className="text-[12.5px] text-muted-foreground">
-              Status · funds will lock on signature
-            </div>
-            <button className="inline-flex items-center gap-2 rounded-full bg-foreground px-4 py-1.5 text-[12.5px] font-medium text-background">
-              Sign & lock
-            </button>
-          </div>
-        </motion.div>
+        </div>
       </div>
     </section>
   );
 }
 
-function Field({ label, children }: { label: string; children: React.ReactNode }) {
+function Row({
+  label,
+  children,
+  mono,
+}: {
+  label: string;
+  children: React.ReactNode;
+  mono?: boolean;
+}) {
   return (
-    <div className="rounded-xl border border-[var(--border)] bg-[oklch(0.17_0.011_250)] px-4 py-3">
+    <div>
       <div className="eyebrow mb-1.5">{label}</div>
-      {children}
+      <div className={`text-[15px] text-foreground ${mono ? "font-mono text-[13.5px]" : ""}`}>
+        {children}
+      </div>
     </div>
   );
 }
 
 export function Escrow() {
   const steps = [
-    ["Buyer", "Funds deposited & locked"],
-    ["Escrow", "Held by Cardinal vault"],
-    ["Verify", "Conditions confirmed on-chain"],
-    ["Settle", "Released to seller"],
+    { n: "01", t: "Deposit", d: "Buyer locks funds in the Cardinal vault." },
+    { n: "02", t: "Hold", d: "Conditions monitored on-chain in real time." },
+    { n: "03", t: "Release", d: "Settled to seller when verified." },
   ];
+
   return (
-    <section id="escrow" className="relative px-6 py-28">
-      <div className="mx-auto max-w-6xl">
-        <div className="grid gap-12 md:grid-cols-[1fr_1.1fr]">
-          <motion.div
-            initial={{ opacity: 0, y: 18 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6 }}
-          >
-            <div className="eyebrow mb-4">Escrow infrastructure</div>
-            <h2 className="font-display text-balance text-[clamp(34px,5vw,60px)] leading-[1] tracking-[-0.03em]">
-              Marketplace-grade
-              <br />
-              settlement trust.
-            </h2>
-            <p className="mt-5 max-w-md text-[16px] leading-relaxed text-muted-foreground">
-              Buyer funds are vaulted on Cardinal. Sellers see committed
-              balances. Funds release only when conditions verify on-chain.
-            </p>
-          </motion.div>
+    <section id="escrow" className="relative px-6 py-32">
+      <div className="mx-auto max-w-[1400px]">
+        <div className="font-mono text-[11px] uppercase tracking-[0.22em] text-muted-foreground">
+          04 / Escrow Infrastructure
+        </div>
+        <motion.h2
+          initial={{ opacity: 0, y: 24 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.8 }}
+          className="wordmark-display mt-6 max-w-3xl text-balance"
+        >
+          Marketplace-grade
+          <br />
+          settlement <span className="text-lime">trust.</span>
+        </motion.h2>
 
-          <motion.div
-            initial={{ opacity: 0, y: 18 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6 }}
-            className="surface-card overflow-hidden p-6"
-          >
-            <div className="relative grid grid-cols-4 gap-3">
-              <svg className="pointer-events-none absolute inset-0" preserveAspectRatio="none" viewBox="0 0 100 10">
-                <line x1="0" y1="5" x2="100" y2="5" stroke="var(--border-strong)" strokeWidth="0.4" />
-                <line x1="0" y1="5" x2="100" y2="5" stroke="var(--cyan)" strokeWidth="0.5" className="animate-dash" />
-              </svg>
-              {steps.map(([t, d], i) => (
-                <div key={t} className="relative z-10 text-center">
-                  <div className="mx-auto inline-flex h-10 w-10 items-center justify-center rounded-full border border-[var(--border-strong)] bg-surface font-mono text-[12px] text-cyan">
-                    0{i + 1}
-                  </div>
-                  <div className="mt-3 text-[13px] font-medium">{t}</div>
-                  <div className="mt-1 text-[11px] text-muted-foreground">{d}</div>
-                </div>
-              ))}
-            </div>
-
-            <div className="mt-8 grid grid-cols-3 gap-3">
-              {[
-                ["$48M", "In-flight escrow"],
-                ["12,408", "Active vaults"],
-                ["0.012%", "Dispute rate"],
-              ].map(([v, l]) => (
-                <div key={l} className="rounded-xl border border-[var(--border)] bg-[oklch(0.17_0.011_250)] p-3">
-                  <div className="font-display text-lg">{v}</div>
-                  <div className="mt-1 text-[10.5px] uppercase tracking-wider text-muted-foreground">{l}</div>
-                </div>
-              ))}
-            </div>
-          </motion.div>
+        <div
+          className="mt-20 grid gap-6 md:grid-cols-3"
+          style={{ perspective: 1800 }}
+        >
+          {steps.map((s, i) => (
+            <motion.div
+              key={s.n}
+              initial={{ opacity: 0, y: 30, rotateY: i === 0 ? 8 : i === 2 ? -8 : 0 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: "-80px" }}
+              transition={{ duration: 0.7, delay: i * 0.1 }}
+              style={{
+                transform: `rotateY(${i === 0 ? 6 : i === 2 ? -6 : 0}deg) rotateX(4deg)`,
+                transformStyle: "preserve-3d",
+              }}
+              className="glass-panel relative p-8"
+            >
+              <div className="font-mono text-[11px] uppercase tracking-[0.22em] text-lime">
+                {s.n}
+              </div>
+              <div className="wordmark-display mt-8 text-[clamp(32px,5vw,56px)] leading-none">
+                {s.t}
+              </div>
+              <div className="mt-4 text-[13.5px] text-muted-foreground">{s.d}</div>
+              {i < 2 && (
+                <div className="absolute -right-3 top-1/2 hidden h-px w-6 bg-gradient-to-r from-lime to-transparent md:block" />
+              )}
+            </motion.div>
+          ))}
         </div>
       </div>
     </section>
