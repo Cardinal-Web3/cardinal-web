@@ -2,7 +2,6 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useSafeSends, statusLabel } from "@/lib/safesend-store";
 import { shortAddr } from "@/lib/mock-scan";
 import { useEffect, useState } from "react";
-import { motion } from "motion/react";
 
 export const Route = createFileRoute("/app/")({
   component: Page,
@@ -27,8 +26,9 @@ function fmtCountdown(target: number) {
 
 function Page() {
   useTick(1000);
-  const { sends, cancelSend } = useSafeSends();
+  const { sends, cancelSend, updateSend } = useSafeSends();
 
+  // Auto-release expired pending sends
   useEffect(() => {
     const t = setInterval(() => {
       const now = Date.now();
@@ -42,33 +42,48 @@ function Page() {
   }, []);
 
   return (
-    <div className="mx-auto max-w-[1100px]">
-      <div className="font-mono text-[11px] uppercase tracking-[0.22em] text-muted-foreground">
-        My SafeSends
+    <div className="mx-auto max-w-5xl">
+      <div className="flex items-end justify-between">
+        <div>
+          <div className="eyebrow mb-2">SafeSends</div>
+          <h1 className="font-display text-[40px] leading-none tracking-[-0.03em]">
+            My SafeSends
+          </h1>
+          <p className="mt-2 text-[14px] text-muted-foreground">
+            Locked, in-flight, and settled protected transfers.
+          </p>
+        </div>
+        <Link
+          to="/app/new"
+          className="inline-flex items-center gap-2 rounded-full bg-foreground px-5 py-2.5 text-[13.5px] font-medium text-background transition hover:bg-cyan"
+        >
+          + New SafeSend
+        </Link>
       </div>
-      <h1 className="wordmark-display mt-4 text-[clamp(48px,8vw,120px)]">
-        Protected.
-      </h1>
-      <p className="mt-3 max-w-md text-[14px] text-muted-foreground">
-        Locked, in-flight, and settled protected transfers.
-      </p>
 
-      <div className="mt-14 space-y-3" style={{ perspective: 2000 }}>
+      <div className="surface-card mt-8 overflow-hidden">
+        <div className="grid grid-cols-[1.4fr_1fr_1.1fr_1.2fr_120px] gap-4 border-b border-[var(--border)] px-5 py-3 font-mono text-[10.5px] uppercase tracking-wider text-muted-foreground">
+          <div>Recipient</div>
+          <div>Amount</div>
+          <div>Status</div>
+          <div>Release / Cancel</div>
+          <div></div>
+        </div>
         {sends.length === 0 ? (
-          <div className="glass-panel p-16 text-center">
-            <div className="font-display text-[28px] tracking-tight">No SafeSends yet.</div>
+          <div className="px-5 py-16 text-center">
+            <div className="font-display text-xl">No SafeSends yet.</div>
             <p className="mt-2 text-[13.5px] text-muted-foreground">
               Create one to see protected settlement in motion.
             </p>
             <Link
               to="/app/new"
-              className="mt-7 inline-flex rounded-md bg-lime px-5 py-3 font-mono text-[11px] uppercase tracking-[0.18em] text-background transition hover:opacity-90"
+              className="mt-6 inline-flex items-center gap-2 rounded-full bg-foreground px-5 py-2.5 text-[13.5px] font-medium text-background transition hover:bg-cyan"
             >
-              + Create your first SafeSend
+              Create your first SafeSend →
             </Link>
           </div>
         ) : (
-          sends.map((s, i) => {
+          sends.map((s) => {
             const statusColor =
               s.status === "released"
                 ? "text-emerald"
@@ -76,75 +91,44 @@ function Page() {
                 ? "text-red"
                 : s.status === "cancelled"
                 ? "text-muted-foreground"
-                : "text-lime";
+                : "text-cyan";
             return (
-              <motion.div
+              <div
                 key={s.id}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5, delay: i * 0.04 }}
-                whileHover={{ rotateY: 1.5, rotateX: -1, y: -2 }}
-                style={{ transformStyle: "preserve-3d" }}
-                className="glass-panel grid grid-cols-[1.5fr_1fr_1fr_1fr_auto] items-center gap-6 px-6 py-5 transition"
+                className="grid grid-cols-[1.4fr_1fr_1.1fr_1.2fr_120px] items-center gap-4 border-b border-[var(--border)] px-5 py-3 last:border-b-0"
               >
-                <div>
-                  <div className="font-mono text-[10px] uppercase tracking-[0.22em] text-muted-foreground">
-                    Recipient
-                  </div>
-                  <div className="mt-1 font-mono text-[15px] text-foreground">
-                    {shortAddr(s.recipient, 6)}
-                  </div>
+                <div className="font-mono text-[12.5px]">{shortAddr(s.recipient, 5)}</div>
+                <div className="text-[13.5px]">
+                  {s.amount.toLocaleString()} <span className="text-muted-foreground">{s.token}</span>
                 </div>
-                <div>
-                  <div className="font-mono text-[10px] uppercase tracking-[0.22em] text-muted-foreground">
-                    Amount
-                  </div>
-                  <div className="mt-1 font-display text-[18px]">
-                    {s.amount.toLocaleString()}{" "}
-                    <span className="text-muted-foreground text-[14px]">{s.token}</span>
-                  </div>
-                </div>
-                <div>
-                  <div className="font-mono text-[10px] uppercase tracking-[0.22em] text-muted-foreground">
-                    Status
-                  </div>
-                  <div className={`mt-1 inline-flex items-center gap-2 text-[13px] ${statusColor}`}>
-                    <span
-                      className={`inline-flex h-1.5 w-1.5 rounded-full bg-current ${
-                        s.status === "pending_release" ? "animate-pulse-soft" : ""
-                      }`}
-                    />
+                <div className={`text-[12.5px] ${statusColor}`}>
+                  <span className="inline-flex items-center gap-2">
+                    <span className={`inline-flex h-1.5 w-1.5 rounded-full bg-current ${s.status === "pending_release" ? "animate-pulse-soft" : ""}`} />
                     {statusLabel(s.status)}
-                  </div>
+                  </span>
                 </div>
                 <div className="font-mono text-[12px] text-muted-foreground">
                   {s.status === "pending_release"
                     ? `releases in ${fmtCountdown(s.releaseAt)}`
                     : s.status === "released"
-                    ? "settled"
+                    ? `settled ${new Date(s.releaseAt).toLocaleString()}`
                     : s.status === "cancelled"
                     ? "refunded"
                     : "—"}
                 </div>
-                <div>
+                <div className="flex justify-end">
                   {s.status === "pending_release" ? (
                     <button
                       onClick={() => cancelSend(s.id)}
-                      className="rounded-md border border-[var(--border-strong)] bg-surface/40 px-3 py-1.5 font-mono text-[10px] uppercase tracking-[0.18em] transition hover:border-red hover:text-red"
+                      className="rounded-full border border-[var(--border-strong)] bg-surface px-3 py-1 text-[11.5px] text-foreground transition hover:border-red hover:text-red"
                     >
                       Cancel
                     </button>
                   ) : (
-                    <Link
-                      to="/app/new/receipt/$id"
-                      params={{ id: s.id }}
-                      className="font-mono text-[10px] uppercase tracking-[0.18em] text-muted-foreground transition hover:text-foreground"
-                    >
-                      View →
-                    </Link>
+                    <span className="font-mono text-[11px] text-muted-foreground">{s.id}</span>
                   )}
                 </div>
-              </motion.div>
+              </div>
             );
           })
         )}

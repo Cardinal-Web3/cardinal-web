@@ -18,7 +18,7 @@ function Page() {
   }, []);
   if (!send) {
     return (
-      <div className="glass-panel p-7">
+      <div className="surface-card p-7">
         <div className="font-display text-xl">Receipt not found.</div>
         <Link to="/app" className="mt-4 inline-block text-cyan hover:underline">
           ← Back to SafeSends
@@ -33,7 +33,7 @@ function Page() {
   const s = Math.floor((remain % 60_000) / 1000);
 
   return (
-    <div className={`glass-panel relative overflow-hidden p-7 ${blocked ? "shadow-[var(--shadow-glow-red)]" : "shadow-[var(--shadow-glow-emerald)]"}`}>
+    <div className={`surface-card relative overflow-hidden p-7 ${blocked ? "shadow-[var(--shadow-glow-red)]" : "shadow-[var(--shadow-glow-emerald)]"}`}>
       <div className="aurora pointer-events-none absolute -inset-32 opacity-25" />
       <div className="relative">
         <div className="flex items-center justify-between">

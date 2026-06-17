@@ -3,10 +3,9 @@ import { Logo } from "./Logo";
 import { useEffect, useState } from "react";
 
 const NAV = [
-  { label: "ENGINE", to: "/", hash: "#engine" },
-  { label: "SAFESEND", to: "/safesend" },
-  { label: "PARTNERS", to: "/partners" },
-  { label: "PILOT", to: "/pilot" },
+  { label: "SafeSend", to: "/safesend" },
+  { label: "Partners", to: "/partners" },
+  { label: "Pilot", to: "/pilot" },
 ];
 
 export function Nav() {
@@ -19,33 +18,42 @@ export function Nav() {
   }, []);
 
   return (
-    <header
-      className={`fixed inset-x-0 top-0 z-50 transition-all duration-500 ${
-        scrolled
-          ? "border-b border-[var(--border)] bg-[oklch(0.10_0.008_250/0.7)] backdrop-blur-xl"
-          : "border-b border-transparent bg-transparent"
-      }`}
-    >
-      <div className="mx-auto flex max-w-[1400px] items-center justify-between px-6 py-4">
+    <header className="fixed inset-x-0 top-0 z-50 flex justify-center px-4 pt-4">
+      <div
+        className={`flex w-full max-w-6xl items-center justify-between rounded-full border px-4 py-2 transition-all duration-500 ${
+          scrolled
+            ? "border-[var(--border)] bg-[oklch(0.14_0.01_250/0.7)] backdrop-blur-xl"
+            : "border-transparent bg-transparent"
+        }`}
+      >
         <Logo />
-        <nav className="hidden items-center gap-8 md:flex">
+        <nav className="hidden items-center gap-1 md:flex">
           {NAV.map((n) => (
             <Link
-              key={n.label}
+              key={n.to}
               to={n.to}
-              className="font-mono text-[11px] uppercase tracking-[0.22em] text-muted-foreground transition hover:text-foreground"
+              className="rounded-full px-3.5 py-1.5 text-[13.5px] text-muted-foreground transition hover:bg-surface hover:text-foreground"
               activeProps={{ className: "text-foreground" }}
             >
               {n.label}
             </Link>
           ))}
         </nav>
-        <Link
-          to="/app"
-          className="inline-flex items-center gap-2 rounded-md border border-lime/60 bg-lime/5 px-4 py-1.5 font-mono text-[11px] uppercase tracking-[0.18em] text-lime transition hover:bg-lime hover:text-background"
-        >
-          Launch App
-        </Link>
+        <div className="flex items-center gap-2">
+          <Link
+            to="/app"
+            className="hidden rounded-full border border-[var(--border-strong)] bg-surface-elevated px-4 py-1.5 text-[13px] text-foreground transition hover:border-cyan hover:text-cyan md:inline-flex"
+          >
+            Launch app
+          </Link>
+          <Link
+            to="/app/new"
+            className="inline-flex items-center gap-1.5 rounded-full bg-foreground px-4 py-1.5 text-[13px] font-medium text-background transition hover:bg-cyan"
+          >
+            Get started
+            <span aria-hidden>→</span>
+          </Link>
+        </div>
       </div>
     </header>
   );

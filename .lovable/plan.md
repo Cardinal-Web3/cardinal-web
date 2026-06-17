@@ -1,113 +1,132 @@
+# Cardinal — Plan
 
-# Cardinal v2 — Security Operating System
+A cinematic, infrastructure-grade marketing site plus a working SafeSend MVP. Dark, security-focused, motion-led. Built to feel like Stripe × CrowdStrike × Linear, not a crypto project.
 
-A cinematic restructure that strips dashboard chrome, adds 3D depth, and stages Cardinal as a security OS. Not crypto. Not SaaS. Reference register: Apple keynote, Arc Browser, Stripe Radar, CrowdStrike Falcon, Palantir Foundry — with the typographic confidence of Litheum.
+## Scope
 
-## Direction shifts
+**Marketing site** (single long scroll, plus standalone sub-routes where SEO matters):
+1. Hero — live transaction scan simulation with verdict
+2. The Problem — cinematic transaction-failure visualization
+3. How Cardinal Works — animated 6-step flow
+4. Transaction Protection Engine — live protection dashboard
+5. SafeSend — premium product UI
+6. Escrow Infrastructure — buyer → escrow → settlement
+7. Threat Intelligence — animated security map
+8. For Partners — wallets, exchanges, marketplaces, payments
+9. Pilot Program — transparency/trust section
+10. Footer
 
-- **−50% dashboard UI** — kill flat stat cards, dense rails, repeated badge clutter. Replace with sparse, oversized typographic statements + one signature visual per section.
-- **+300% cinematic storytelling** — each section is a scene with a single idea, a single visual, and air around it. Sticky scroll, parallax depth, scrubbed reveals.
-- **Tilted glass panels** — replace every flat card with floating panels using `transform: perspective(1600px) rotateX/rotateY`, backdrop-blur, inner highlight stroke, soft drop shadow, subtle hover tilt tracking the cursor.
-- **Giant typography moments** — Litheum-style closing wordmark, oversized section labels (clamp 80→220px), tight tracking, mixed case. Body stays small and quiet.
+**MVP App** at `/app`:
+- `/app` — My SafeSends (dashboard)
+- `/app/new` — Create SafeSend (form)
+- `/app/new/scan` — Scan In Progress (live pipeline)
+- `/app/new/verdict` — Verdict (ALLOW / REVIEW / BLOCK)
+- `/app/new/confirm` — Confirm SafeSend
+- `/app/new/receipt` — Receipt
+State persisted in localStorage; no wallet/chain integration — this is a cinematic, deployable-feeling prototype.
 
-## Signature visual: Transaction Interception Engine (TIE)
+## Design system
 
-A single hero-grade 3D scene replacing the current `HeroScan`. Lives in the hero AND returns as the centerpiece of the Protection Engine section.
+- **Palette (tokens in `src/styles.css`)**
+  - `--background` near-black `oklch(0.14 0.01 250)`
+  - `--surface` graphite `oklch(0.19 0.012 250)`
+  - `--surface-elevated` `oklch(0.22 0.014 250)`
+  - `--foreground` `oklch(0.97 0.005 250)`
+  - `--muted-foreground` `oklch(0.62 0.02 250)`
+  - `--cyan` `oklch(0.82 0.13 210)` (primary highlight)
+  - `--violet` `oklch(0.62 0.17 290)` (gradient accent)
+  - `--emerald` `oklch(0.74 0.16 155)` (allow / success)
+  - `--amber` `oklch(0.80 0.16 75)` (review)
+  - `--red` `oklch(0.65 0.22 25)` (block / threat)
+  - `--border` `oklch(1 0 0 / 0.08)`
+  - `--gradient-aurora` cyan→violet radial used sparingly behind hero verdict
+- **Type**: Geist (display + body) loaded via `<link>` in `__root.tsx`; JetBrains Mono for addresses/tx hashes/code. Huge display sizes (clamp 56→112px), tight tracking, generous leading on body.
+- **Surfaces**: 1px borders at 8% white, subtle inner highlight, soft outer glow on key cards (`shadow: 0 0 0 1px var(--border), 0 20px 60px -20px oklch(0.82 0.13 210 / 0.15)`).
+- **Grid**: subtle dotted background grid, vignette at edges.
 
-```text
-        wallet ──packet──▶  ╔═══════════════╗  ──packet──▶ chain
-        wallet ──packet──▶  ║   CARDINAL    ║       │
-        wallet ──packet──▶  ║  INTERCEPTOR  ║   ↘ quarantined
-                            ╚═══════════════╝
-                              ▲    ▲    ▲
-                          5 signal beams (tilted glass slabs)
+## Motion system
+
+- **Library**: `motion` (Motion for React) for component animation, `gsap` only if a single scrub-scrubbed timeline is needed (likely not). All easings `[0.22, 1, 0.36, 1]`.
+- **Hero scan pipeline**: orchestrated timeline — wallet pulse → tx assembled (mono text typing) → 5 signal nodes light up in sequence (wallet reputation, recipient, network, contract, simulation) → lines flow into a central core → verdict card lifts in with colored aura → "Protected settlement" confirmation pill.
+- **Section reveals**: subtle y-translate + opacity on enter, staggered children.
+- **Dashboard**: live counters, sparkline ticks, "scanning…" shimmer on rows.
+- **Threat map**: SVG world-ish abstract grid with animated arcs between nodes, occasional red threat pulse, cyan-protected pulses.
+- **Reduced motion**: respect `prefers-reduced-motion` everywhere.
+
+## 3D / depth
+
+Lightweight, no heavy WebGL. Use layered SVG + CSS 3D transforms:
+- Hero core: rotating concentric SVG rings with parallax on mouse move
+- Network graph: animated SVG nodes/edges with depth blur layers
+- No three.js — keeps bundle and SSR clean
+
+## Section-by-section build notes
+
+- **Hero**: full viewport, left column copy ("Protect Web3 transactions before you sign." + sub + two CTAs `Launch App` / `Explore SafeSend`), right column the live scan visualization. Auto-loops every ~8s; ALLOW/REVIEW/BLOCK rotate to show range. Pause on hover.
+- **Problem**: split — left: failure modes list (malicious approval, scam wallet, wrong recipient, wrong network, irreversible loss) with mono code-style examples; right: a transaction "shattering" animation when an unprotected sig is submitted.
+- **How it works**: horizontal 6-step rail, sticky on scroll, each step animates in with its own micro-illustration.
+- **Protection Engine**: full-bleed dashboard mockup — left rail with 5 signal categories, center risk graph (sparkline + heat bars), right panel "findings" feed streaming in.
+- **SafeSend**: realistic product card — recipient (truncated 0x address), token selector (ETH/USDC), amount, delay slider (1h–72h), gas estimate, release time, cancel window countdown, status pill. Interactive — user can change inputs.
+- **Escrow**: 4-stage horizontal flow with state machine animation.
+- **Threat Intelligence**: animated map of nodes; counters: scam wallets indexed, txs monitored, signals processed.
+- **Partners**: 4 cards (Wallets / Exchanges / Marketplaces / Payments) with subtle hover lift and abstract icon per category.
+- **Pilot**: transparent honest block — "SafeSend is in controlled pilot." Bullet list of what that means. Form: request pilot access (email only, stored in localStorage — no backend in v1).
+- **Footer**: minimal — logo, columns (Product / Company / Resources / Legal), small print, status indicator dot.
+
+## App MVP (`/app/*`)
+
+Real feeling, no backend. Zustand store + localStorage.
+- **Create SafeSend**: same field set as marketing section, plus recipient validation (regex 0x + 40 hex), token dropdown, amount with USD estimate, delay & cancel window, optional memo.
+- **Scan**: 5-stage pipeline with realistic timings (600–1200ms each), live log feed in mono. Findings appear with severity chips.
+- **Verdict**: large verdict letter (A/R/B) with aura color, summary, list of findings, "Proceed" / "Edit transaction" / "Cancel".
+- **Confirm**: review screen, "Sign with wallet" simulated (2s pending → success).
+- **Receipt**: tx-id, cancel countdown, share/copy actions, link to dashboard.
+- **My SafeSends**: table — recipient, amount, status (Pending release / Released / Cancelled / Blocked), countdown, row actions (Cancel before release).
+
+## Routes (TanStack Start)
+
 ```
+src/routes/
+  __root.tsx                 (head, font links, dark class on html)
+  index.tsx                  (full marketing page)
+  safesend.tsx               (deeper SafeSend page for SEO; reuses sections)
+  partners.tsx               (partners detail page)
+  pilot.tsx                  (pilot program detail + signup)
+  app.tsx                    (app shell: left rail, top bar, <Outlet/>)
+  app.index.tsx              (My SafeSends)
+  app.new.tsx                (Create — wizard layout with <Outlet/>)
+  app.new.index.tsx          (form)
+  app.new.scan.tsx
+  app.new.verdict.tsx
+  app.new.confirm.tsx
+  app.new.receipt.$id.tsx
+```
+Each route sets its own `head()` with unique title, description, og tags.
 
-- 3D stage: CSS `perspective: 2000px`, tilted floor grid receding to horizon, volumetric fog.
-- **Packets** = small luminous quads traveling along curved SVG paths from left (origin wallets) toward the central Interceptor core.
-- **Interceptor core** = stacked tilted glass slabs (5 signal layers) rotating slowly on Y; each slab lights when its check runs.
-- **Threats** = red packets that get yanked off-path into a quarantine well below the core (animated arc + dissolve).
-- **Safe** = cyan packets that pass through and continue to the right, leaving a faint trail.
-- **Verdict halo** pulses around the core when a transaction resolves (cyan/amber/red aura).
-- Subtle mouse parallax on the whole stage; respects `prefers-reduced-motion`.
+## Files to create (key components)
 
-Implemented as layered SVG + CSS 3D transforms + Motion. No three.js.
+- `src/components/site/Nav.tsx`, `Footer.tsx`
+- `src/components/site/Hero.tsx`, `HeroScan.tsx` (the cinematic visualization)
+- `src/components/site/Problem.tsx`, `HowItWorks.tsx`, `ProtectionEngine.tsx`, `SafeSendShowcase.tsx`, `Escrow.tsx`, `ThreatMap.tsx`, `Partners.tsx`, `Pilot.tsx`
+- `src/components/app/AppShell.tsx`, `SafeSendForm.tsx`, `ScanPipeline.tsx`, `VerdictCard.tsx`, `ReceiptCard.tsx`, `SafeSendTable.tsx`
+- `src/components/ui/*` shadcn (already present)
+- `src/lib/safesend-store.ts` (Zustand + localStorage)
+- `src/lib/mock-scan.ts` (deterministic-ish scoring from address + amount)
+- `src/styles.css` updated with full token system
 
-## Section rebuild (marketing)
+## Dependencies to add
 
-1. **Hero** — left: tight 2-line statement ("Intercept the transaction. / Before it signs."), small mono caption, two pills (Launch App / See the Engine). Right: TIE scene full-bleed, 80vh.
-2. **The Threat Surface** (was Problem) — single giant numeric ("$3.8B" type moment), one tilted glass panel listing 4 failure modes, packet-shatter micro-animation on scroll.
-3. **The Interception Engine** — sticky scroll: TIE re-mounts large, 5 captions reveal one-by-one as each signal slab lights (Wallet · Recipient · Network · Contract · Simulation). No dashboard, no rails.
-4. **SafeSend** — one tilted glass panel floating in space, oversized "SafeSend." wordmark behind it, minimal labels.
-5. **Escrow** — three tilted slabs in perspective row (Deposit → Hold → Release), connecting light beam.
-6. **Threat Intelligence** — globe-less: tilted dark plane with animated arcs + 3 huge counters as type moments, not cards.
-7. **Partners** — 4 thin tilted glass slats, hover lifts and rotates toward cursor.
-8. **Pilot** — single centered glass panel, email input, quiet.
-9. **Closing wordmark** — Litheum-style: **"CARDINAL"** rendered massive (clamp 140→320px), tight, edge-to-edge, hairline divider above. Sits directly above footer.
-10. **Footer** — Litheum-style columns: Technology / Product / Company / Legal / Follow. Compact, mono labels, hairline dividers.
+`motion`, `zustand`, `clsx` (likely present), `lucide-react` (present).
 
-## Nav
+## Non-goals (v1)
 
-Rebuild to match Litheum register:
-- Left: small logo mark + wordmark.
-- Center-right: uppercase mono links with wide tracking (Engine · SafeSend · Escrow · Partners · Pilot).
-- Right: pill outlined CTA "LAUNCH APP" with cyan border, hover fills.
-- Transparent over hero, gains hairline border + blur on scroll.
+- No wallet connect / chain RPC
+- No backend / Lovable Cloud (no auth, no DB)
+- No payments
+- No three.js / WebGL
 
-## App (`/app/*`) — dashboard slimdown
+If you want any of those wired up (Cloud for storing pilot signups, real wallet connect, etc.), say the word and I'll add a follow-up.
 
-Remove ~50% of UI density while keeping it functional:
-- Drop the left rail; replace with a single thin top bar (logo · breadcrumb · "+ New SafeSend").
-- "My SafeSends" becomes a sparse list of floating tilted glass rows (not a table), one per transfer, oversized recipient address, tiny status, hover lifts.
-- New SafeSend wizard: each step is one centered glass panel on a dark stage, giant step label behind it ("01 / COMPOSE"), one input group visible at a time.
-- Scan step: reuse the TIE scene at smaller scale; signal slabs light in sequence; log feed reduced to 3 lines max.
-- Verdict: single giant letter (A / R / B) at 240px, one-line summary, two actions.
-- Receipt: one panel, mono tx id, cancel countdown as a type moment.
+---
 
-## Design tokens (additions to `src/styles.css`)
-
-- `--glass-bg: oklch(0.22 0.014 250 / 0.55)`
-- `--glass-stroke: oklch(1 0 0 / 0.10)`
-- `--glass-highlight: linear-gradient(180deg, oklch(1 0 0 / 0.08), transparent 40%)`
-- `--shadow-float: 0 40px 80px -30px oklch(0 0 0 / 0.7), 0 0 0 1px var(--glass-stroke), inset 0 1px 0 oklch(1 0 0 / 0.06)`
-- `--perspective-stage: 2000px`
-- Utilities: `.glass-panel`, `.tilt-left`, `.tilt-right`, `.stage-3d`, `.wordmark-giant` (clamp(80px, 18vw, 320px), letter-spacing -0.05em, font-weight 500).
-- Keep current palette; bias accent usage to a single signature hue per scene.
-
-## Motion
-
-- Mouse-tracked tilt on glass panels (max ±6°, spring damped).
-- Section reveals: y+opacity, staggered, ease `[0.22,1,0.36,1]`.
-- TIE: orchestrated Motion timeline (packets, slab lights, verdict halo) on loop; pauses on hover; freezes under reduced motion to a static composed frame.
-- Scroll-driven: Interception Engine section uses sticky + scroll progress to advance through the 5 slabs.
-
-## Files
-
-**New**
-- `src/components/site/TIE.tsx` — the Transaction Interception Engine (shared hero + section).
-- `src/components/site/GlassPanel.tsx` — tilted glass primitive (mouse parallax, variants).
-- `src/components/site/Wordmark.tsx` — giant closing wordmark.
-- `src/components/site/SectionLabel.tsx` — oversized typographic section headers.
-- `src/components/site/InterceptionSection.tsx` — sticky scroll scene.
-
-**Rewritten**
-- `src/components/site/Nav.tsx` — Litheum-style nav.
-- `src/components/site/Footer.tsx` — Litheum-style columns + giant wordmark.
-- `src/components/site/Hero.tsx` — tighter copy, embeds TIE.
-- `src/components/site/HeroScan.tsx` — replaced by TIE (file removed).
-- `src/components/site/Sections1.tsx` / `Sections2.tsx` / `Sections3.tsx` — rebuilt around glass + type moments.
-- `src/components/site/ProtectionEngine.tsx` — replaced by `InterceptionSection.tsx`.
-- `src/components/app/AppShell.tsx` — top-bar only, no left rail.
-- All `src/routes/app.*` — slimmed UI, glass rows, giant step labels.
-- `src/styles.css` — new glass/perspective tokens + utilities.
-
-**Unchanged**
-- `src/lib/safesend-store.ts`, `src/lib/mock-scan.ts`, routing tree.
-
-## Non-goals
-
-- No three.js / WebGL (kept performant via CSS 3D + SVG).
-- No backend, no wallet connect, no auth changes.
-- No content/feature additions beyond what already exists.
-
-Approve and I'll rebuild end-to-end in one pass.
+Approve and I'll build it end-to-end.

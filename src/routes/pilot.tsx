@@ -33,7 +33,7 @@ function Page() {
         <PilotSection />
         <section className="px-6 pb-20">
           <div className="mx-auto max-w-2xl">
-            <div className="glass-panel p-8">
+            <div className="surface-card p-8">
               <div className="eyebrow mb-3">Request access</div>
               <div className="font-display text-2xl tracking-tight">
                 Join the SafeSend pilot.
