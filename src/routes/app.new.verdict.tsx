@@ -61,7 +61,7 @@ function Page() {
   const v = STYLE[scan.verdict];
 
   return (
-    <div className={`surface-card relative overflow-hidden p-7 ${v.glow}`}>
+    <div className={`glass-panel relative overflow-hidden p-7 ${v.glow}`}>
       <div className="aurora pointer-events-none absolute -inset-32 opacity-30" />
       <div className="relative">
         <div className="flex items-start justify-between">

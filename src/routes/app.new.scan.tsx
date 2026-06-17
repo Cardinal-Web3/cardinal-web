@@ -71,7 +71,7 @@ function Page() {
   }, []);
 
   return (
-    <div className="surface-card p-7">
+    <div className="glass-panel p-7">
       <div className="flex items-center justify-between">
         <div>
           <div className="font-display text-[26px] tracking-tight">Scanning…</div>
