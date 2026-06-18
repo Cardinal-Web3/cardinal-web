@@ -1,10 +1,18 @@
 import { Link } from "@tanstack/react-router";
 import { motion } from "motion/react";
 import { HeroScan } from "./HeroScan";
+import { HeroSceneClient } from "@/components/three/HeroSceneClient";
+import { CountUp } from "@/components/motion/CountUp";
+
+const WORDS = ["Protect", "Web3", "transactions"];
 
 export function Hero() {
   return (
     <section className="relative overflow-hidden pt-32 md:pt-40">
+      {/* Three.js backdrop (lazy, desktop only) */}
+      <div className="pointer-events-none absolute inset-x-0 top-0 h-[900px] opacity-70">
+        <HeroSceneClient />
+      </div>
       <div className="grid-bg pointer-events-none absolute inset-0 [mask-image:radial-gradient(ellipse_at_center,black_30%,transparent_75%)] opacity-60" />
       <div className="aurora pointer-events-none absolute left-1/2 top-0 h-[600px] w-[900px] -translate-x-1/2 opacity-50" />
 
@@ -29,25 +37,36 @@ export function Hero() {
             </span>
           </motion.div>
 
-          <motion.h1
-            initial={{ opacity: 0, y: 18 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.7, delay: 0.05 }}
-            className="font-display mt-6 text-balance text-[clamp(44px,7vw,92px)] leading-[0.95] tracking-[-0.035em]"
-          >
-            Protect Web3
+          <h1 className="font-display mt-6 text-balance text-[clamp(44px,7vw,92px)] leading-[0.95] tracking-[-0.035em]">
+            {WORDS.map((w, i) => (
+              <span key={w} className="inline-block overflow-hidden align-bottom">
+                <motion.span
+                  initial={{ y: "100%" }}
+                  animate={{ y: 0 }}
+                  transition={{ duration: 0.7, delay: 0.1 + i * 0.08, ease: [0.22, 1, 0.36, 1] }}
+                  className="inline-block pr-3"
+                >
+                  {w}
+                </motion.span>
+              </span>
+            ))}
             <br />
-            transactions
-            <br />
-            <span className="bg-gradient-to-br from-foreground via-foreground to-cyan/80 bg-clip-text text-transparent">
-              before you sign.
+            <span className="inline-block overflow-hidden align-bottom">
+              <motion.span
+                initial={{ y: "100%" }}
+                animate={{ y: 0 }}
+                transition={{ duration: 0.8, delay: 0.42, ease: [0.22, 1, 0.36, 1] }}
+                className="inline-block text-brand"
+              >
+                before you sign.
+              </motion.span>
             </span>
-          </motion.h1>
+          </h1>
 
           <motion.p
             initial={{ opacity: 0, y: 18 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.7, delay: 0.15 }}
+            transition={{ duration: 0.7, delay: 0.6 }}
             className="mt-6 max-w-xl text-[16px] leading-relaxed text-muted-foreground"
           >
             Cardinal scans transaction risk, explains what it finds, and helps users
@@ -57,7 +76,7 @@ export function Hero() {
           <motion.div
             initial={{ opacity: 0, y: 18 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.7, delay: 0.25 }}
+            transition={{ duration: 0.7, delay: 0.72 }}
             className="mt-9 flex flex-wrap items-center gap-3"
           >
             <Link
@@ -80,31 +99,57 @@ export function Hero() {
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            transition={{ duration: 0.8, delay: 0.4 }}
+            transition={{ duration: 0.8, delay: 0.9 }}
             className="mt-12 grid max-w-md grid-cols-3 gap-6"
           >
-            {[
-              ["1.4M", "Transactions scanned"],
-              ["48k", "Threats blocked"],
-              ["12 ms", "Avg verdict latency"],
-            ].map(([v, l]) => (
-              <div key={l}>
-                <div className="font-display text-2xl text-foreground">{v}</div>
-                <div className="mt-1 text-[11.5px] uppercase tracking-wider text-muted-foreground">
-                  {l}
-                </div>
+            <div>
+              <div className="font-display text-2xl">
+                <CountUp to={1.4} format={(n) => `${(n).toFixed(1)}M`} />
               </div>
-            ))}
+              <div className="mt-1 text-[11.5px] uppercase tracking-wider text-muted-foreground">
+                Transactions scanned
+              </div>
+            </div>
+            <div>
+              <div className="font-display text-2xl">
+                <CountUp to={48} format={(n) => `${n}k`} />
+              </div>
+              <div className="mt-1 text-[11.5px] uppercase tracking-wider text-muted-foreground">
+                Threats blocked
+              </div>
+            </div>
+            <div>
+              <div className="font-display text-2xl">
+                <CountUp to={12} suffix=" ms" />
+              </div>
+              <div className="mt-1 text-[11.5px] uppercase tracking-wider text-muted-foreground">
+                Avg verdict
+              </div>
+            </div>
           </motion.div>
         </div>
 
         <motion.div
           initial={{ opacity: 0, y: 24, scale: 0.98 }}
           animate={{ opacity: 1, y: 0, scale: 1 }}
-          transition={{ duration: 0.8, delay: 0.1 }}
+          transition={{ duration: 0.9, delay: 0.2, ease: [0.22, 1, 0.36, 1] }}
         >
           <HeroScan />
         </motion.div>
+      </div>
+
+      {/* Trust strip */}
+      <div className="mx-auto max-w-6xl border-t border-[var(--border)] px-6 py-6">
+        <div className="flex flex-wrap items-center justify-between gap-4">
+          <div className="eyebrow">Indexes threat data from</div>
+          <div className="flex flex-wrap items-center gap-x-8 gap-y-3 font-display text-[15px] text-muted-foreground">
+            {["Ethereum", "Base", "Arbitrum", "Solana", "Optimism", "Polygon"].map((c) => (
+              <span key={c} className="opacity-70 transition hover:opacity-100">
+                {c}
+              </span>
+            ))}
+          </div>
+        </div>
       </div>
     </section>
   );

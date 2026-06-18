@@ -6,6 +6,8 @@ import { Problem, HowItWorks } from "@/components/site/Sections1";
 import { ProtectionEngine } from "@/components/site/ProtectionEngine";
 import { SafeSendShowcase, Escrow } from "@/components/site/Sections2";
 import { ThreatMap, Partners, Pilot } from "@/components/site/Sections3";
+import { FAQ } from "@/components/site/FAQ";
+import { CTABand } from "@/components/site/CTABand";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -21,6 +23,24 @@ export const Route = createFileRoute("/")({
         property: "og:description",
         content:
           "Before you sign, Cardinal scans. Before funds move, Cardinal protects.",
+      },
+      { property: "og:image", content: "/favicon.svg" },
+      { name: "twitter:image", content: "/favicon.svg" },
+    ],
+    links: [{ rel: "canonical", href: "/" }],
+    scripts: [
+      {
+        type: "application/ld+json",
+        children: JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "SoftwareApplication",
+          name: "Cardinal",
+          applicationCategory: "SecurityApplication",
+          operatingSystem: "Web",
+          description:
+            "Cardinal is the protection layer between users and blockchain transactions.",
+          offers: { "@type": "Offer", price: "0", priceCurrency: "USD" },
+        }),
       },
     ],
   }),
@@ -41,6 +61,8 @@ function Index() {
         <ThreatMap />
         <Partners />
         <Pilot />
+        <FAQ />
+        <CTABand />
       </main>
       <Footer />
     </div>
