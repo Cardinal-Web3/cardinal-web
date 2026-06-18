@@ -1,5 +1,7 @@
 import { Link } from "@tanstack/react-router";
 import { Logo } from "./Logo";
+import { ThemeToggle } from "./ThemeToggle";
+import { WalletButton } from "./WalletButton";
 import { useEffect, useState } from "react";
 
 const NAV = [
@@ -18,11 +20,11 @@ export function Nav() {
   }, []);
 
   return (
-    <header className="fixed inset-x-0 top-0 z-50 flex justify-center px-4 pt-4">
+    <header className="fixed inset-x-0 top-0 z-50 flex justify-center px-3 pt-3 sm:px-4 sm:pt-4">
       <div
-        className={`flex w-full max-w-6xl items-center justify-between rounded-full border px-4 py-2 transition-all duration-500 ${
+        className={`flex w-full max-w-6xl items-center justify-between gap-2 rounded-full border px-3 py-2 transition-all duration-500 sm:px-4 ${
           scrolled
-            ? "border-[var(--border)] bg-[oklch(0.14_0.01_250/0.7)] backdrop-blur-xl"
+            ? "border-[var(--border)] bg-background/70 backdrop-blur-xl"
             : "border-transparent bg-transparent"
         }`}
       >
@@ -39,20 +41,15 @@ export function Nav() {
             </Link>
           ))}
         </nav>
-        <div className="flex items-center gap-2">
+        <div className="flex shrink-0 items-center gap-2">
+          <ThemeToggle />
           <Link
             to="/app"
             className="hidden rounded-full border border-[var(--border-strong)] bg-surface-elevated px-4 py-1.5 text-[13px] text-foreground transition hover:border-cyan hover:text-cyan md:inline-flex"
           >
             Launch app
           </Link>
-          <Link
-            to="/app/new"
-            className="inline-flex items-center gap-1.5 rounded-full bg-foreground px-4 py-1.5 text-[13px] font-medium text-background transition hover:bg-cyan"
-          >
-            Get started
-            <span aria-hidden>→</span>
-          </Link>
+          <WalletButton />
         </div>
       </div>
     </header>
