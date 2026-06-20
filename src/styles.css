@@ -68,6 +68,9 @@
 
   --grid-line: oklch(0.18 0.02 260 / 0.05);
   --dot-color: oklch(0.18 0.02 260 / 0.09);
+  --map-line: oklch(0.5 0.13 215 / 0.42);
+  --map-line-strong: oklch(0.5 0.15 215 / 0.72);
+  --map-grid: oklch(0.5 0.13 215 / 0.2);
 
   --gradient-brand: linear-gradient(135deg, var(--cyan), var(--violet));
   --gradient-aurora: radial-gradient(
@@ -94,6 +97,31 @@
   --shadow-glow-emerald: 0 0 40px -8px oklch(0.58 0.16 155 / 0.45);
   --shadow-glow-red: 0 0 40px -8px oklch(0.58 0.22 25 / 0.45);
   --shadow-glow-amber: 0 0 40px -8px oklch(0.68 0.17 75 / 0.45);
+
+  /* Curtain reveal — LIGHT: clean white content lifts off a soft tinted footer */
+  --content-bg: oklch(0.99 0.003 250);
+  --content-seam: oklch(0.95 0.012 255 / 0.9);
+  --panel-ring: oklch(0.18 0.02 260 / 0.1);
+  --panel-shadow: 0 30px 70px -38px oklch(0.18 0.02 260 / 0.22);
+
+  --footer-bg: linear-gradient(
+    180deg,
+    oklch(0.955 0.008 255),
+    oklch(0.93 0.012 258) 58%,
+    oklch(0.918 0.014 260)
+  );
+  --footer-fg: oklch(0.2 0.02 260);
+  --footer-muted: oklch(0.46 0.02 260);
+  --footer-faint: oklch(0.2 0.02 260 / 0.5);
+  --footer-ring: oklch(0.18 0.02 260 / 0.1);
+  --footer-chip: oklch(1 0 0 / 0.7);
+  --footer-glow: oklch(0.58 0.14 210 / 0.12);
+  --footer-primary-bg: oklch(0.2 0.02 260);
+  --footer-primary-fg: oklch(0.99 0 0);
+  --footer-secondary-border: oklch(0.18 0.02 260 / 0.14);
+  --footer-secondary-bg: oklch(1 0 0 / 0.5);
+
+  --progressive-blur-tint: color-mix(in oklab, var(--background) 78%, transparent);
 }
 
 /* DARK theme — cinematic */
@@ -117,6 +145,9 @@
   --aurora-2: oklch(0.66 0.18 290 / 0.22);
   --grid-line: oklch(1 0 0 / 0.04);
   --dot-color: oklch(1 0 0 / 0.08);
+  --map-line: oklch(0.82 0.13 210 / 0.28);
+  --map-line-strong: oklch(0.82 0.13 210 / 0.78);
+  --map-grid: oklch(0.82 0.13 210 / 0.18);
 
   --shadow-elevated:
     0 0 0 1px var(--border),
@@ -126,6 +157,31 @@
     0 70px 140px -40px oklch(0 0 0 / 0.85),
     0 40px 80px -30px oklch(0.66 0.18 290 / 0.35),
     inset 0 1px 0 0 oklch(1 0 0 / 0.06);
+
+  /* Curtain reveal — DARK: near-black content lifts off a deeper footer surface */
+  --content-bg: oklch(0.14 0.01 250);
+  --content-seam: oklch(0.12 0.012 250 / 0.95);
+  --panel-ring: oklch(1 0 0 / 0.1);
+  --panel-shadow: 0 36px 110px -54px oklch(0 0 0 / 0.85);
+
+  --footer-bg: linear-gradient(
+    180deg,
+    oklch(0.12 0.012 250),
+    oklch(0.16 0.018 250) 42%,
+    oklch(0.11 0.014 245)
+  );
+  --footer-fg: oklch(0.975 0.005 250);
+  --footer-muted: oklch(0.66 0.02 250);
+  --footer-faint: oklch(1 0 0 / 0.4);
+  --footer-ring: oklch(1 0 0 / 0.1);
+  --footer-chip: oklch(1 0 0 / 0.05);
+  --footer-glow: oklch(0.58 0.14 210 / 0.22);
+  --footer-primary-bg: oklch(0.99 0 0);
+  --footer-primary-fg: oklch(0.12 0.012 250);
+  --footer-secondary-border: oklch(1 0 0 / 0.14);
+  --footer-secondary-bg: oklch(1 0 0 / 0.04);
+
+  --progressive-blur-tint: color-mix(in oklab, var(--background) 82%, transparent);
 }
 
 @layer base {
@@ -141,6 +197,10 @@
     font-feature-settings: "ss01", "cv11";
     -webkit-font-smoothing: antialiased;
     text-rendering: optimizeLegibility;
+  }
+
+  html.lenis.lenis-smooth {
+    scroll-behavior: auto !important;
   }
 
   body {
@@ -230,11 +290,95 @@
   color: transparent;
 }
 
+/* Slow, subtle drift of the brand gradient across the phrase.
+   Auto-disabled by the prefers-reduced-motion block below. */
+@utility text-brand-drift {
+  background-size: 220% auto;
+  animation: brand-drift 9s ease-in-out infinite alternate;
+}
+
 @utility ring-aurora {
   box-shadow:
     0 0 0 1px var(--border-strong),
     0 0 60px -10px var(--aurora-1),
     0 0 120px -40px var(--aurora-2);
+}
+
+/* ---- Progressive viewport blur ---- */
+@layer components {
+  .progressive-blur-edge {
+    isolation: isolate;
+  }
+
+  @supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+    .progressive-blur-layer {
+      display: none;
+    }
+  }
+}
+
+/* ---- Curtain reveal ---- */
+@keyframes network-marquee {
+  from { transform: translate3d(0, 0, 0); }
+  to { transform: translate3d(-33.333%, 0, 0); }
+}
+
+@layer components {
+  .network-marquee-track {
+    animation: network-marquee 35s linear infinite;
+  }
+
+  @media (max-width: 640px) {
+    .network-marquee-track {
+      animation-duration: 42s;
+    }
+  }
+
+  /* The page content: a solid, theme-aware panel that sits ABOVE the footer,
+     with rounded bottom corners + an inset hairline ring + soft ambient shadow
+     so its lifting edge is felt, not drawn as a hard line. */
+  .curtain-content {
+    position: relative;
+    z-index: 1;
+    background-color: var(--content-bg);
+    background-image:
+      radial-gradient(circle at 20% 0%, var(--aurora-2), transparent 50%),
+      radial-gradient(circle at 80% 100%, var(--aurora-1), transparent 55%);
+    background-attachment: fixed;
+    border-bottom-left-radius: 28px;
+    border-bottom-right-radius: 28px;
+    box-shadow:
+      inset 0 0 0 1px var(--panel-ring),
+      var(--panel-shadow);
+  }
+
+  /* Bottom edge blends toward the footer's top color so the seam reads
+     as an intentional reveal, not a cut. */
+  .curtain-content::after {
+    content: "";
+    position: absolute;
+    inset-inline: 0;
+    bottom: 0;
+    height: 180px;
+    pointer-events: none;
+    border-bottom-left-radius: inherit;
+    border-bottom-right-radius: inherit;
+    background: linear-gradient(180deg, transparent, var(--content-seam));
+  }
+
+  /* The footer surface, behind the content. */
+  .footer-surface {
+    background: var(--footer-bg);
+    color: var(--footer-fg);
+  }
+
+  .footer-glow {
+    background: radial-gradient(
+      ellipse at 50% 100%,
+      var(--footer-glow),
+      transparent 60%
+    );
+  }
 }
 
 @keyframes scan-line {
@@ -263,6 +407,10 @@
 @keyframes float-y {
   0%, 100% { transform: translateY(0); }
   50% { transform: translateY(-8px); }
+}
+@keyframes brand-drift {
+  0% { background-position: 0% 50%; }
+  100% { background-position: 100% 50%; }
 }
 
 @utility animate-scan {

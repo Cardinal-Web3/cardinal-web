@@ -1,6 +1,8 @@
-import { motion, AnimatePresence } from "motion/react";
-import { Link } from "@tanstack/react-router";
-import { useEffect, useMemo, useState } from "react";
+"use client";
+
+import { motion } from "motion/react";
+import Link from "next/link";
+import { useMemo } from "react";
 import { CountUp } from "@/components/motion/CountUp";
 
 type Node = { x: number; y: number; tier: "idle" | "active" | "threat" };
@@ -55,16 +57,7 @@ export function ThreatMap() {
     return list;
   }, [nodes]);
 
-  const [feed, setFeed] = useState(INGEST_FEED.slice(0, 3));
-  useEffect(() => {
-    let i = 3;
-    const t = setInterval(() => {
-      const next = INGEST_FEED[i % INGEST_FEED.length];
-      setFeed((cur) => [next, ...cur].slice(0, 3));
-      i++;
-    }, 3200);
-    return () => clearInterval(t);
-  }, []);
+  const feed = INGEST_FEED.slice(0, 3);
 
   return (
     <section id="intel" className="relative px-6 py-28">
@@ -76,23 +69,23 @@ export function ThreatMap() {
           transition={{ duration: 0.6 }}
           className="max-w-3xl"
         >
-          <div className="eyebrow mb-4">Threat intelligence</div>
+          <div className="eyebrow mb-4">Security Engine</div>
           <h2 className="font-display text-balance text-[clamp(34px,5vw,60px)] leading-[1] tracking-[-0.03em]">
-            Every wallet, every contract,
+            Threat intelligence
             <br />
-            continuously monitored.
+            for every transaction.
           </h2>
           <p className="mt-5 max-w-2xl text-[16px] leading-relaxed text-muted-foreground">
-            Cardinal indexes drainer campaigns, contract upgrades, and
-            cross-chain laundering patterns in real time. Findings update every
-            scan, everywhere.
+            Cardinal&apos;s Security Engine indexes drainer campaigns, contract
+            upgrades, and cross-chain laundering patterns. Findings feed every
+            scan before users sign.
           </p>
         </motion.div>
 
         <div className="surface-card mt-14 grid overflow-hidden md:grid-cols-[1.4fr_1fr]">
-          <div className="relative aspect-[8/5] w-full overflow-hidden border-b border-[var(--border)] md:border-b-0 md:border-r">
-            <div className="aurora pointer-events-none absolute inset-0 opacity-60" />
-            <div className="dot-bg absolute inset-0 opacity-40" />
+          <div className="relative aspect-[8/5] w-full overflow-hidden border-b border-[var(--border)] bg-surface-elevated/45 md:border-b-0 md:border-r">
+            <div className="aurora pointer-events-none absolute inset-0 opacity-45" />
+            <div className="dot-bg absolute inset-0 opacity-55" />
             <svg viewBox="0 0 760 320" className="relative h-full w-full">
               <defs>
                 <radialGradient id="threatGlow">
@@ -103,6 +96,20 @@ export function ThreatMap() {
                   <stop offset="0%" stopColor="var(--cyan)" stopOpacity="0.5" />
                   <stop offset="100%" stopColor="var(--cyan)" stopOpacity="0" />
                 </radialGradient>
+                {/* arc gradient */}
+                <linearGradient id="arcGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+                  <stop offset="0%" stopColor="var(--cyan)" stopOpacity="0.6" />
+                  <stop offset="50%" stopColor="var(--cyan)" stopOpacity="0.15" />
+                  <stop offset="100%" stopColor="var(--cyan)" stopOpacity="0.6" />
+                </linearGradient>
+                {/* glow filter for arcs */}
+                <filter id="arcGlow" x="-20%" y="-20%" width="140%" height="140%">
+                  <feGaussianBlur in="SourceGraphic" stdDeviation="2" result="blur" />
+                  <feMerge>
+                    <feMergeNode in="blur" />
+                    <feMergeNode in="SourceGraphic" />
+                  </feMerge>
+                </filter>
               </defs>
 
               {/* longitude grid */}
@@ -114,31 +121,53 @@ export function ThreatMap() {
                   rx={380 * t}
                   ry={150 * t}
                   fill="none"
-                  stroke="var(--cyan)"
-                  strokeWidth="0.3"
-                  opacity="0.18"
+                  stroke="var(--map-grid)"
+                  strokeWidth="0.8"
+                  opacity="1"
                 />
               ))}
 
-              {/* arcs */}
+              {/* arcs — cubic bezier with gradient stroke + traveling dot */}
               {arcs.map((arc, i) => {
-                const mx = (arc.a.x + arc.b.x) / 2;
-                const my = Math.min(arc.a.y, arc.b.y) - 30;
-                const d = `M ${arc.a.x} ${arc.a.y} Q ${mx} ${my} ${arc.b.x} ${arc.b.y}`;
+                const dx = arc.b.x - arc.a.x;
+                const dy = arc.b.y - arc.a.y;
+                const dist = Math.sqrt(dx * dx + dy * dy);
+                const lift = Math.min(dist * 0.35, 80);
+                const cp1x = arc.a.x + dx * 0.3;
+                const cp1y = Math.min(arc.a.y, arc.b.y) - lift;
+                const cp2x = arc.a.x + dx * 0.7;
+                const cp2y = Math.min(arc.a.y, arc.b.y) - lift * 0.8;
+                const d = `M ${arc.a.x} ${arc.a.y} C ${cp1x} ${cp1y} ${cp2x} ${cp2y} ${arc.b.x} ${arc.b.y}`;
+                const dur = 3 + (i % 3) * 0.8;
                 return (
                   <g key={i}>
-                    <path d={d} fill="none" stroke="var(--cyan)" strokeWidth="0.4" opacity="0.3" />
+                    {/* base arc line */}
+                    <path
+                      d={d}
+                      fill="none"
+                      stroke="url(#arcGrad)"
+                      strokeWidth="0.8"
+                      opacity="0.7"
+                    />
+                    {/* glow arc */}
                     <path
                       d={d}
                       fill="none"
                       stroke="var(--cyan)"
-                      strokeWidth="1"
-                      strokeDasharray="3 200"
-                      opacity="0.9"
-                      style={{
-                        animation: `dash 4s linear ${arc.delay}s infinite`,
-                      }}
+                      strokeWidth="1.5"
+                      opacity="0.08"
+                      filter="url(#arcGlow)"
                     />
+                    {/* traveling dot */}
+                    <circle r="2.5" fill="var(--cyan)" opacity="0.9" filter="url(#arcGlow)">
+                      <animateMotion
+                        dur={`${dur}s`}
+                        repeatCount="indefinite"
+                        begin={`${arc.delay}s`}
+                        path={d}
+                      />
+                      <animate attributeName="opacity" values="0;0.9;0.9;0" dur={`${dur}s`} repeatCount="indefinite" begin={`${arc.delay}s`} />
+                    </circle>
                   </g>
                 );
               })}
@@ -203,22 +232,15 @@ export function ThreatMap() {
             <div className="mt-5">
               <div className="eyebrow mb-2">Recent threat ingest</div>
               <div className="relative space-y-1.5">
-                <AnimatePresence initial={false}>
-                  {feed.map(([id, t]) => (
-                    <motion.div
-                      key={id + t}
-                      layout
-                      initial={{ opacity: 0, y: -10, scale: 0.97 }}
-                      animate={{ opacity: 1, y: 0, scale: 1 }}
-                      exit={{ opacity: 0, scale: 0.97 }}
-                      transition={{ duration: 0.35 }}
-                      className="flex items-center justify-between gap-3 rounded-md border border-[var(--border)] bg-surface px-3 py-2"
-                    >
-                      <div className="font-mono shrink-0 text-[11.5px] text-muted-foreground">{id}</div>
-                      <div className="min-w-0 truncate text-right text-[12.5px] text-foreground/85">{t}</div>
-                    </motion.div>
-                  ))}
-                </AnimatePresence>
+                {feed.map(([id, t]) => (
+                  <div
+                    key={id + t}
+                    className="flex items-center justify-between gap-3 rounded-md border border-[var(--border)] bg-surface px-3 py-2"
+                  >
+                    <div className="font-mono shrink-0 text-[11.5px] text-muted-foreground">{id}</div>
+                    <div className="min-w-0 truncate text-right text-[12.5px] text-foreground/85">{t}</div>
+                  </div>
+                ))}
               </div>
             </div>
           </div>
@@ -230,10 +252,14 @@ export function ThreatMap() {
 
 export function Partners() {
   const items = [
-    { tag: "Wallets", title: "Sign with protection on", body: "Embed Cardinal scan in your sign flow. ALLOW/REVIEW/BLOCK in 50ms." },
-    { tag: "Exchanges", title: "Withdrawals you can stand behind", body: "SafeSend on outbound flows reduces fraud reversals and support load." },
-    { tag: "Marketplaces", title: "Settlement trust, off the shelf", body: "Escrow APIs for digital asset and physical-good marketplaces." },
-    { tag: "Payments", title: "Programmable compliance", body: "Routing, screening, and finality controls for fiat-to-crypto rails." },
+    { tag: "Wallets", title: "Scan before sign", icon: "🛡", body: "Verdicts before users move funds." },
+    { tag: "Exchanges", title: "Safer withdrawals", icon: "↗", body: "Scan-first outbound protection." },
+    { tag: "Marketplaces", title: "Settlement trust", icon: "⚖", body: "Escrow APIs for digital assets." },
+    { tag: "OTC desks", title: "Counterparty check", icon: "🔍", body: "Verify before high-value moves." },
+    { tag: "DAOs", title: "Treasury guard", icon: "🏛", body: "Screen before multisig executes." },
+    { tag: "Custodians", title: "Institutional rails", icon: "🔒", body: "Risk controls on every flow." },
+    { tag: "Web3 teams", title: "Ship fast", icon: "⚡", body: "Composable APIs, no security org." },
+    { tag: "Payments", title: "Compliance-ready", icon: "✓", body: "Scan fiat-to-crypto payouts." },
   ];
   return (
     <section id="partners" className="relative px-6 py-28">
@@ -248,38 +274,70 @@ export function Partners() {
           <div className="max-w-3xl">
             <div className="eyebrow mb-4">For partners</div>
             <h2 className="font-display text-balance text-[clamp(34px,5vw,60px)] leading-[1] tracking-[-0.03em]">
-              Ship transaction protection.
+              A security layer
               <br />
-              Skip the security org.
+              you can embed.
             </h2>
+            <p className="mt-5 max-w-2xl text-[16px] leading-relaxed text-muted-foreground">
+              Embed Cardinal before users move funds — wallets, exchanges,
+              marketplaces, DAOs, and more.
+            </p>
           </div>
           <Link
-            to="/partners"
+            href="/partners"
             className="inline-flex items-center gap-2 rounded-full border border-[var(--border-strong)] bg-surface-elevated px-4 py-2 text-[13px] transition hover:border-cyan hover:text-cyan"
           >
-            Talk to platform team →
+            Join Pilot →
           </Link>
         </motion.div>
 
-        <div className="mt-12 grid gap-px overflow-hidden rounded-2xl border border-[var(--border)] bg-[var(--border)] md:grid-cols-2 lg:grid-cols-4">
+        <div className="mt-12 grid gap-px overflow-hidden rounded-2xl border border-[var(--border)] bg-[var(--border)] sm:grid-cols-2 lg:grid-cols-4">
           {items.map((it, i) => (
             <motion.div
               key={it.tag}
-              initial={{ opacity: 0, y: 18 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.5, delay: i * 0.06 }}
-              className="group relative bg-surface p-7"
+              initial={{ opacity: 0, y: 24, scale: 0.97 }}
+              whileInView={{ opacity: 1, y: 0, scale: 1 }}
+              viewport={{ once: true, margin: "-40px" }}
+              transition={{ duration: 0.5, delay: i * 0.07, ease: [0.22, 1, 0.36, 1] }}
+              whileHover={{ y: -4 }}
+              className="group relative cursor-pointer bg-surface p-6 transition-colors duration-300 hover:bg-surface-elevated/80"
             >
-              <div className="font-mono text-[10.5px] uppercase tracking-[0.18em] text-cyan/80">
-                {it.tag}
+              {/* hover glow */}
+              <div className="pointer-events-none absolute inset-0 opacity-0 transition-opacity duration-500 group-hover:opacity-100">
+                <div className="absolute -inset-px rounded-sm bg-gradient-to-b from-cyan/[0.07] to-transparent" />
               </div>
-              <div className="font-display mt-12 text-[19px] leading-snug tracking-tight">
-                {it.title}
-              </div>
-              <div className="mt-3 text-[13px] text-muted-foreground">{it.body}</div>
-              <div className="mt-6 inline-flex items-center gap-1.5 text-[12px] text-foreground/70 transition group-hover:text-cyan">
-                Integration guide →
+
+              <div className="relative">
+                <div className="mb-4 flex items-center justify-between">
+                  <div className="font-mono text-[10.5px] uppercase tracking-[0.18em] text-cyan/80">
+                    {it.tag}
+                  </div>
+                  <motion.span
+                    className="text-lg opacity-60 transition-opacity duration-300 group-hover:opacity-100"
+                    whileHover={{ scale: 1.15, rotate: 5 }}
+                    transition={{ type: "spring", stiffness: 400, damping: 15 }}
+                  >
+                    {it.icon}
+                  </motion.span>
+                </div>
+
+                <div className="font-display text-[18px] leading-snug tracking-tight transition-colors duration-300 group-hover:text-cyan">
+                  {it.title}
+                </div>
+
+                <div className="mt-2 text-[13px] leading-relaxed text-muted-foreground">
+                  {it.body}
+                </div>
+
+                <div className="mt-5 flex items-center gap-1.5 text-[12px] text-foreground/50 transition-all duration-300 group-hover:gap-2.5 group-hover:text-cyan">
+                  <span>Learn more</span>
+                  <motion.span
+                    className="inline-block"
+                    initial={false}
+                  >
+                    →
+                  </motion.span>
+                </div>
               </div>
             </motion.div>
           ))}
@@ -290,64 +348,77 @@ export function Partners() {
 }
 
 export function Pilot() {
+  const commitments = [
+    "Daily threat-engine reviews",
+    "Transfer and vault caps",
+    "End-to-end audited findings",
+    "Public post-mortems",
+  ];
+
   return (
     <section id="pilot" className="relative px-6 py-28">
-      <div className="mx-auto max-w-6xl">
+      <div className="mx-auto max-w-5xl">
         <motion.div
-          initial={{ opacity: 0, y: 18 }}
+          initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          transition={{ duration: 0.6 }}
-          className="surface-card relative overflow-hidden p-10 md:p-14"
+          transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+          className="text-center"
         >
-          <div className="aurora pointer-events-none absolute -right-40 -top-40 h-[500px] w-[500px] opacity-40" />
-          <div className="relative grid gap-10 md:grid-cols-[1.2fr_1fr] md:items-end">
-            <div>
-              <div className="inline-flex items-center gap-2 rounded-full border border-amber/40 bg-amber/10 px-3 py-1 text-[11px]">
-                <span className="inline-flex h-1.5 w-1.5 rounded-full bg-amber shadow-[var(--shadow-glow-amber)]" />
-                <span className="font-mono uppercase tracking-[0.18em] text-amber">
-                  Controlled pilot
-                </span>
-              </div>
-              <h2 className="font-display mt-6 text-balance text-[clamp(34px,5vw,56px)] leading-[1] tracking-[-0.03em]">
-                We'd rather be honest
-                <br />
-                than oversold.
-              </h2>
-              <p className="mt-5 max-w-lg text-[16px] leading-relaxed text-muted-foreground">
-                SafeSend is in controlled pilot. Today we focus on testing,
-                monitoring, and hardening with a small set of partner wallets
-                and exchanges before opening broadly.
-              </p>
-            </div>
-            <ul className="space-y-3 text-[14px]">
-              {[
-                "Daily threat-engine reviews with partners",
-                "Caps on transfer size and concurrent vaults",
-                "All findings audited end-to-end",
-                "Public post-mortems for any incident",
-              ].map((t) => (
-                <li key={t} className="flex items-start gap-3 rounded-xl border border-[var(--border)] bg-surface px-4 py-3">
-                  <span className="mt-1.5 inline-flex h-1.5 w-1.5 flex-none rounded-full bg-cyan shadow-[var(--shadow-glow-cyan)]" />
-                  <span className="text-foreground/90">{t}</span>
-                </li>
-              ))}
-            </ul>
+          <div className="inline-flex items-center gap-2 rounded-full border border-amber/30 bg-amber/8 px-3 py-1 text-[11px]">
+            <span className="inline-flex h-1.5 w-1.5 rounded-full bg-amber shadow-[var(--shadow-glow-amber)]" />
+            <span className="font-mono uppercase tracking-[0.18em] text-amber">
+              Controlled pilot
+            </span>
           </div>
-          <div className="relative mt-10 flex flex-wrap gap-3 border-t border-[var(--border)] pt-8">
-            <Link
-              to="/pilot"
-              className="inline-flex items-center gap-2 rounded-full bg-foreground px-5 py-2.5 text-[13.5px] font-medium text-background transition hover:bg-cyan"
+
+          <h2 className="font-display mx-auto mt-6 max-w-xl text-balance text-[clamp(32px,4.5vw,52px)] leading-[1.05] tracking-[-0.03em]">
+            Honest over oversold.
+          </h2>
+
+          <p className="mx-auto mt-4 max-w-lg text-[15px] leading-relaxed text-muted-foreground">
+            SafeSend is in controlled pilot — testing and hardening with
+            select partners before opening broadly.
+          </p>
+        </motion.div>
+
+        {/* commitments row */}
+        <div className="mx-auto mt-10 grid max-w-3xl grid-cols-2 gap-3 sm:grid-cols-4">
+          {commitments.map((t, i) => (
+            <motion.div
+              key={t}
+              initial={{ opacity: 0, y: 14 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.4, delay: 0.15 + i * 0.07, ease: [0.22, 1, 0.36, 1] }}
+              className="group rounded-xl border border-[var(--border)] bg-surface px-4 py-4 text-center transition-colors duration-300 hover:border-cyan/30"
             >
-              Request pilot access →
-            </Link>
-            <Link
-              to="/app"
-              className="inline-flex items-center gap-2 rounded-full border border-[var(--border-strong)] bg-surface-elevated px-5 py-2.5 text-[13.5px] transition hover:border-cyan hover:text-cyan"
-            >
-              Try the app
-            </Link>
-          </div>
+              <span className="mx-auto mb-2.5 inline-flex h-1.5 w-1.5 rounded-full bg-cyan shadow-[var(--shadow-glow-cyan)] transition-transform duration-300 group-hover:scale-150" />
+              <div className="text-[13px] leading-snug text-foreground/85">{t}</div>
+            </motion.div>
+          ))}
+        </div>
+
+        {/* CTA */}
+        <motion.div
+          initial={{ opacity: 0, y: 12 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.5, delay: 0.4 }}
+          className="mt-10 flex justify-center gap-3"
+        >
+          <Link
+            href="/pilot"
+            className="inline-flex items-center gap-2 rounded-full bg-foreground px-5 py-2.5 text-[13.5px] font-medium text-background transition hover:bg-cyan"
+          >
+            Join Pilot →
+          </Link>
+          <Link
+            href="/app"
+            className="inline-flex items-center gap-2 rounded-full border border-[var(--border-strong)] bg-surface-elevated px-5 py-2.5 text-[13.5px] transition hover:border-cyan hover:text-cyan"
+          >
+            Launch App
+          </Link>
         </motion.div>
       </div>
     </section>

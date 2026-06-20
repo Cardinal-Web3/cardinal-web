@@ -4,11 +4,15 @@ import { useState } from "react";
 const QS = [
   {
     q: "Is Cardinal a wallet?",
-    a: "No. Cardinal is the protection layer between wallets, exchanges, and chains. We scan, explain, and route — we never hold custody.",
+    a: "No. Cardinal is the trust layer between wallets, exchanges, and chains. We scan risk before signature, explain findings in plain English, and route users into safer settlement flows — we never hold custody.",
   },
   {
     q: "How does SafeSend work?",
-    a: "SafeSend holds a transfer in a programmable escrow for a delay window you choose. During that window, you can cancel, review findings, or release early.",
+    a: "SafeSend protects direct transfers by scanning risk before signing. After a low-risk verdict, funds lock in a programmable delay you choose — giving you a second chance to cancel before settlement.",
+  },
+  {
+    q: "What's the difference between SafeSend and escrow?",
+    a: "SafeSend protects direct transfers with a cancellable delay after scan and signature. Escrow holds funds until both buyer and seller meet agreed terms — ideal for marketplaces. Escrow is on the roadmap; SafeSend is in controlled pilot.",
   },
   {
     q: "What chains do you support?",
@@ -16,7 +20,7 @@ const QS = [
   },
   {
     q: "Do you store private keys?",
-    a: "Never. Cardinal is non-custodial. Signatures stay in your wallet; we only see public transaction data the scanner needs.",
+    a: "Never. Cardinal is non-custodial. Signatures stay in your wallet; we only see public transaction data the Protection Engine needs.",
   },
   {
     q: "When does Cardinal open to the public?",

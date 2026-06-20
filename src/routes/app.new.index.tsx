@@ -38,7 +38,7 @@ function Page() {
     <div className="surface-card p-7">
       <div className="font-display text-[26px] tracking-tight">Compose transfer</div>
       <p className="mt-1 text-[13.5px] text-muted-foreground">
-        We'll scan before you sign. Funds lock on signature and release after the delay.
+        Scan with Cardinal before you sign. Funds lock on signature and release after the delay.
       </p>
 
       <div className="mt-7 space-y-4">

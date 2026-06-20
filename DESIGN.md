@@ -97,18 +97,14 @@ const EASE = [0.22, 1, 0.36, 1] as const;
 
 ---
 
-## 6. Three.js / WebGL rules
+## 6. Visual performance rules
 
-Three is **opt-in, lazy, and capability-gated**.
+The MVP avoids WebGL and heavy 3D by default.
 
-- Wrapper: `src/components/three/HeroSceneClient.tsx` (lazy + Suspense + capability check).
-- `useWebGLSupport()` skips when: SSR, `prefers-reduced-motion`, viewport < 768px, no WebGL context.
-- Always pass `dpr={[1, 1.6]}` to cap GPU cost on mobile.
-- Shader uniforms read theme tokens via `THREE.Color()` rebuilt on theme change (TODO: hook into `useTheme` for live recolor).
-- Files live under `src/components/three/`. The actual Three import is **never** at module scope of a route — always behind `React.lazy`.
-
-Current scenes: `HeroScene` (aurora shader plane + 700 particles).
-Planned: `EngineFlow` (instanced beads on a curve), `VerdictShield` (icosahedron + Fresnel).
+- Hero ambience is CSS-only: radial gradients, grid layers, and lightweight motion primitives.
+- Do not add Three.js/R3F back into the first-load route unless there is a measured reason.
+- Any future 3D must be opt-in, lazy-loaded, disabled under `prefers-reduced-motion`, and tested on low-power laptops.
+- The app experience should prioritize responsiveness over cinematic complexity.
 
 ---
 
@@ -159,7 +155,7 @@ UI: `WalletButton` (pill in nav with `layoutId="wallet-pill"` morph) + `WalletMo
 | `Reveal` | `motion/Reveal.tsx` | Stagger-on-view wrapper |
 | `CountUp` | `motion/CountUp.tsx` | Number animation |
 | `PageTransition` | `motion/PageTransition.tsx` | Route enter/exit |
-| `HeroSceneClient` | `three/HeroSceneClient.tsx` | Lazy R3F aurora |
+| Hero backdrop | `site/Hero.tsx` | CSS-only aurora/grid backdrop |
 
 ---
 
@@ -196,7 +192,7 @@ Wizard mutates `drafts[key]`, then `createSend` produces a `SafeSend` with `rele
 - ✅ `aria-hidden` on decorative SVGs (logo mark, threat map).
 - ✅ Focus ring uses `--color-ring` (cyan).
 - ✅ Color isn't sole signaling — every verdict carries text (ALLOW/REVIEW/BLOCK).
-- ✅ `prefers-reduced-motion` honored globally and in WebGL gating.
+- ✅ `prefers-reduced-motion` honored globally.
 - ✅ Form inputs labeled (placeholder + aria where needed).
 
 ---
@@ -226,7 +222,7 @@ Wizard mutates `drafts[key]`, then `createSend` produces a `SafeSend` with `rele
 | Wallet behavior | `src/lib/wallet-store.ts`, `WalletButton.tsx` |
 | Theme persistence | `src/hooks/use-theme.ts` |
 | Motion easings | `src/components/motion/*` |
-| Three.js scenes | `src/components/three/*` |
+| Hero backdrop | `src/components/site/Hero.tsx` |
 | SEO defaults | `src/routes/__root.tsx` head |
 | Per-route SEO | each `src/routes/*.tsx` `head()` |
 | MVP nav (mobile tabs) | `src/components/app/AppShell.tsx` |
@@ -284,7 +280,7 @@ Wizard mutates `drafts[key]`, then `createSend` produces a `SafeSend` with `rele
 - Per-route canonical + OG.
 
 **Engineering**
-- Added deps: `three`, `@react-three/fiber`, `@react-three/drei`.
+- Removed WebGL/R3F from the active MVP path to keep the app responsive.
 - No new runtime deps for theming, wallet, or motion.
 
 ---

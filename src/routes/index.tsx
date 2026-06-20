@@ -1,28 +1,20 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { Nav } from "@/components/site/Nav";
-import { Footer } from "@/components/site/Footer";
-import { Hero } from "@/components/site/Hero";
-import { Problem, HowItWorks } from "@/components/site/Sections1";
-import { ProtectionEngine } from "@/components/site/ProtectionEngine";
-import { SafeSendShowcase, Escrow } from "@/components/site/Sections2";
-import { ThreatMap, Partners, Pilot } from "@/components/site/Sections3";
-import { FAQ } from "@/components/site/FAQ";
-import { CTABand } from "@/components/site/CTABand";
+import { HomePage } from "@/components/pages/HomePage";
 
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Cardinal — Protect Web3 transactions before you sign" },
+      { title: "Cardinal — Protect every transaction before value moves" },
       {
         name: "description",
         content:
-          "Cardinal is the protection layer between users and blockchain transactions. Scan risk, block scams, and route funds through SafeSend and escrow.",
+          "Cardinal is the trust layer for digital asset transactions. Scan risk before signature and route users into safer settlement flows like SafeSend and escrow.",
       },
-      { property: "og:title", content: "Cardinal — Web3 Transaction Protection" },
+      { property: "og:title", content: "Cardinal — Protect every transaction before value moves" },
       {
         property: "og:description",
         content:
-          "Before you sign, Cardinal scans. Before funds move, Cardinal protects.",
+          "Cardinal scans risk before signature and routes users into safer settlement flows like SafeSend and escrow.",
       },
       { property: "og:image", content: "/favicon.svg" },
       { name: "twitter:image", content: "/favicon.svg" },
@@ -38,33 +30,11 @@ export const Route = createFileRoute("/")({
           applicationCategory: "SecurityApplication",
           operatingSystem: "Web",
           description:
-            "Cardinal is the protection layer between users and blockchain transactions.",
+            "Cardinal is the trust layer for digital asset transactions. Protect every transaction before value moves.",
           offers: { "@type": "Offer", price: "0", priceCurrency: "USD" },
         }),
       },
     ],
   }),
-  component: Index,
+  component: HomePage,
 });
-
-function Index() {
-  return (
-    <div className="relative min-h-screen overflow-hidden">
-      <Nav />
-      <main>
-        <Hero />
-        <Problem />
-        <HowItWorks />
-        <ProtectionEngine />
-        <SafeSendShowcase />
-        <Escrow />
-        <ThreatMap />
-        <Partners />
-        <Pilot />
-        <FAQ />
-        <CTABand />
-      </main>
-      <Footer />
-    </div>
-  );
-}

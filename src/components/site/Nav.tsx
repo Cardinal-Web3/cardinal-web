@@ -1,4 +1,6 @@
-import { Link } from "@tanstack/react-router";
+"use client";
+
+import Link from "next/link";
 import { Logo } from "./Logo";
 import { ThemeToggle } from "./ThemeToggle";
 import { WalletButton } from "./WalletButton";
@@ -24,7 +26,7 @@ export function Nav() {
       <div
         className={`flex w-full max-w-6xl items-center justify-between gap-2 rounded-full border px-3 py-2 transition-all duration-500 sm:px-4 ${
           scrolled
-            ? "border-[var(--border)] bg-background/70 backdrop-blur-xl"
+            ? "border-[var(--border)]/60 bg-background/50 shadow-[0_8px_32px_-12px_rgba(0,0,0,0.25)] backdrop-blur-2xl backdrop-saturate-150"
             : "border-transparent bg-transparent"
         }`}
       >
@@ -33,9 +35,8 @@ export function Nav() {
           {NAV.map((n) => (
             <Link
               key={n.to}
-              to={n.to}
+              href={n.to}
               className="rounded-full px-3.5 py-1.5 text-[13.5px] text-muted-foreground transition hover:bg-surface hover:text-foreground"
-              activeProps={{ className: "text-foreground" }}
             >
               {n.label}
             </Link>
@@ -44,7 +45,7 @@ export function Nav() {
         <div className="flex shrink-0 items-center gap-2">
           <ThemeToggle />
           <Link
-            to="/app"
+            href="/app"
             className="hidden rounded-full border border-[var(--border-strong)] bg-surface-elevated px-4 py-1.5 text-[13px] text-foreground transition hover:border-cyan hover:text-cyan md:inline-flex"
           >
             Launch app

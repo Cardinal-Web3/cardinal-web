@@ -1,4 +1,7 @@
-import { Link, Outlet, useRouterState } from "@tanstack/react-router";
+"use client";
+
+import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { motion } from "motion/react";
 import { Logo } from "@/components/site/Logo";
 import { ThemeToggle } from "@/components/site/ThemeToggle";
@@ -11,7 +14,7 @@ const NAV = [
 ];
 
 export function AppShell({ children }: { children?: React.ReactNode }) {
-  const pathname = useRouterState({ select: (s) => s.location.pathname });
+  const pathname = usePathname();
   const { status, address } = useWallet();
   const connected = status === "connected" && address;
 
@@ -28,7 +31,7 @@ export function AppShell({ children }: { children?: React.ReactNode }) {
             return (
               <Link
                 key={n.to}
-                to={n.to}
+                href={n.to}
                 className={`relative mb-1 flex items-center gap-3 rounded-lg px-3 py-2 text-[13.5px] transition ${
                   active ? "text-foreground" : "text-muted-foreground hover:bg-surface-elevated hover:text-foreground"
                 }`}
@@ -51,13 +54,13 @@ export function AppShell({ children }: { children?: React.ReactNode }) {
             <span className="inline-flex h-1.5 w-1.5 rounded-full bg-amber" />
             Pilot
           </div>
-          <div className="mt-3 text-[12.5px] font-medium">Caps in effect</div>
+          <div className="mt-3 text-[12.5px] font-medium">Protection Engine · pilot</div>
           <div className="mt-1 text-[11.5px] text-muted-foreground">
             Max $25k per SafeSend during pilot.
           </div>
         </div>
         <div className="border-t border-[var(--border)] px-5 py-4 text-[11px] text-muted-foreground">
-          <Link to="/" className="hover:text-foreground">← Back to site</Link>
+          <Link href="/" className="hover:text-foreground">← Back to site</Link>
         </div>
       </aside>
 
@@ -75,7 +78,7 @@ export function AppShell({ children }: { children?: React.ReactNode }) {
           <div className="flex shrink-0 items-center gap-2">
             <div className="hidden items-center gap-2 rounded-full border border-[var(--border)] bg-surface px-3 py-1 text-[11px] sm:flex">
               <span className="inline-flex h-1.5 w-1.5 rounded-full bg-emerald shadow-[var(--shadow-glow-emerald)]" />
-              <span className="font-mono uppercase tracking-wider text-muted-foreground">protected</span>
+              <span className="font-mono uppercase tracking-wider text-muted-foreground">Protection Engine</span>
             </div>
             <ThemeToggle />
             {connected ? (
@@ -92,7 +95,7 @@ export function AppShell({ children }: { children?: React.ReactNode }) {
         </header>
 
         <main className="flex-1 px-4 py-6 pb-24 sm:px-6 sm:py-8 md:pb-8">
-          {children ?? <Outlet />}
+          {children}
         </main>
 
         {/* mobile bottom tab bar */}
@@ -102,7 +105,7 @@ export function AppShell({ children }: { children?: React.ReactNode }) {
             return (
               <Link
                 key={n.to}
-                to={n.to}
+                href={n.to}
                 className={`relative inline-flex min-h-[44px] flex-1 items-center justify-center gap-2 rounded-full px-3 py-2 text-[12.5px] transition ${
                   active ? "text-foreground" : "text-muted-foreground"
                 }`}

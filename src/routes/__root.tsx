@@ -9,6 +9,8 @@ import {
 } from "@tanstack/react-router";
 import { useEffect, type ReactNode } from "react";
 import { WalletModal } from "@/components/site/WalletButton";
+import { ProgressiveBlur } from "@/components/layout/progressive-blur";
+import { SmoothScroll } from "@/components/layout/smooth-scroll";
 
 import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
@@ -79,19 +81,19 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Cardinal — Web3 Transaction Protection Infrastructure" },
+      { title: "Cardinal — Protect every transaction before value moves" },
       {
         name: "description",
         content:
-          "Before you sign, Cardinal scans. Before funds move, Cardinal protects. The protection layer between users and blockchain transactions.",
+          "Cardinal is the trust layer for digital asset transactions. Scan risk before signature and route users into safer settlement flows like SafeSend and escrow.",
       },
       { name: "author", content: "Cardinal" },
       { name: "theme-color", content: "#000000" },
-      { property: "og:title", content: "Cardinal — Web3 Transaction Protection" },
+      { property: "og:title", content: "Cardinal — Protect every transaction before value moves" },
       {
         property: "og:description",
         content:
-          "Scan transaction risk, explain what we find, and move funds through safer settlement flows like SafeSend and escrow.",
+          "Cardinal scans risk before signature and routes users into safer settlement flows like SafeSend and escrow.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
@@ -138,8 +140,11 @@ function RootComponent() {
   const { queryClient } = Route.useRouteContext();
   return (
     <QueryClientProvider client={queryClient}>
-      <Outlet />
-      <WalletModal />
+      <SmoothScroll>
+        <Outlet />
+        <ProgressiveBlur />
+        <WalletModal />
+      </SmoothScroll>
     </QueryClientProvider>
   );
 }

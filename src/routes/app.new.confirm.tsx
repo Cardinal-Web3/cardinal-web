@@ -1,7 +1,7 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { useSafeSends } from "@/lib/safesend-store";
-import { scanTransaction, shortAddr } from "@/lib/mock-scan";
+import { scanTransaction, shortAddr, VERDICT_DISPLAY } from "@/lib/mock-scan";
 
 export const Route = createFileRoute("/app/new/confirm")({
   component: Page,
@@ -48,7 +48,7 @@ function Page() {
     <div className="surface-card p-7">
       <div className="font-display text-[26px] tracking-tight">Confirm SafeSend</div>
       <p className="mt-1 text-[13.5px] text-muted-foreground">
-        Review the protected transfer. Funds lock the moment you sign.
+        Review the protected transfer after Cardinal&apos;s verdict. Funds lock the moment you sign.
       </p>
 
       <div className="mt-7 grid gap-3">
@@ -76,7 +76,7 @@ function Page() {
                   : "text-red"
               }
             >
-              {scan.verdict}
+              {VERDICT_DISPLAY[scan.verdict].label}
             </span>
           }
         />

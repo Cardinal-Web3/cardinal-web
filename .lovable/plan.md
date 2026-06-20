@@ -49,15 +49,13 @@ Believable global threat constellation.
 
 ---
 
-## 4. Three.js / WebGL — selective immersion
+## 4. Visual performance — no WebGL by default
 
-Use sparingly where it improves investor demo. Lazy-loaded, mobile-safe, with CSS fallback when `navigator.gpu`/WebGL2 unavailable or `prefers-reduced-motion` is set. Pause when off-screen and on mobile data-saver / low DPR.
+The active MVP should avoid WebGL and heavy 3D rendering. The hero now uses CSS-only radial gradients, grid layers, and lightweight motion primitives.
 
-- **Hero backdrop:** R3F shader plane — slow flowing aurora + grid lattice + parallax particles reacting to cursor. Mobile: static gradient + CSS aurora.
-- **Protection Engine section:** R3F instanced "transaction beads" flowing along a curved path through 6 signal gates; gate triggers a small ring burst. Mobile: SVG-only fallback already in place.
-- **Verdict page (MVP):** small Three.js shield mesh (icosahedron + Fresnel shader) that morphs color per verdict (emerald/amber/red) with bloom. Mobile: 2D SVG shield.
-- Wrap all in `<Suspense>` + `React.lazy`; gate with `useWebGLSupport()` hook; bundle-split so the marketing pages don't ship Three to users who never scroll.
-- Deps to add: `three`, `@react-three/fiber`, `@react-three/drei`, `@react-three/postprocessing`. SSR-safe via dynamic import in client-only components.
+- Do not add Three.js/R3F back into the first-load route unless there is a measured product reason.
+- Keep animated decorative sections static or low-frequency where possible.
+- Prioritize smooth app responsiveness over cinematic GPU effects.
 
 ---
 
@@ -146,7 +144,7 @@ Create `DESIGN.md` so any LLM/human can pick up the project. Sections:
 3. Typography scale (Geist + JetBrains Mono).
 4. Spacing, radii, shadow, blur, gradient tokens.
 5. Motion vocabulary (durations, easings, reveal, reduced-motion).
-6. Three.js/WebGL usage rules + fallbacks.
+6. Visual performance rules and no-WebGL default.
 7. Theming architecture (provider, View Transitions, persistence).
 8. Wallet state machine + animation contract.
 9. Component recipes (Card, Pill, SignalRow, VerdictBadge, MetricTile, ThemeToggle, WalletButton).
@@ -160,12 +158,12 @@ Create `DESIGN.md` so any LLM/human can pick up the project. Sections:
 
 ## Technical notes
 
-- **New deps:** `three`, `@react-three/fiber`, `@react-three/drei`, `@react-three/postprocessing`. Optional `@number-flow/react` for count-ups.
+- **Removed deps:** `three`, `@react-three/fiber`, `@react-three/drei`. Optional `@number-flow/react` for count-ups.
 - **No new deps for:** theming (local provider), wallet (local Zustand), motion (already have `motion`).
 - All colors via `var(--…)`; extend tokens for `--gradient-brand`, `--shadow-3d`, `--ring-aurora`, plus full light variants.
 - **New files:**
   - `src/components/site/{LogoMark,TrustStrip,Comparison,FAQ,CTABand,ThemeToggle,WalletButton,WalletModal}.tsx`
-  - `src/components/three/{HeroScene,EngineFlow,VerdictShield,useWebGLSupport}.tsx`
+  - Keep hero ambience in CSS inside `src/components/site/Hero.tsx`
   - `src/components/motion/{Reveal,CountUp,SmoothLink}.tsx`
   - `src/hooks/{use-smooth-nav,use-tilt,use-theme,use-wallet,use-in-view-stagger}.ts`
   - `src/lib/{theme-store,wallet-store}.ts`

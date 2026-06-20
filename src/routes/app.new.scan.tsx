@@ -74,9 +74,9 @@ function Page() {
     <div className="surface-card p-7">
       <div className="flex items-center justify-between">
         <div>
-          <div className="font-display text-[26px] tracking-tight">Scanning…</div>
+          <div className="font-display text-[26px] tracking-tight">Cardinal Protection Engine · scanning</div>
           <p className="mt-1 text-[13.5px] text-muted-foreground">
-            Five signal classes evaluated in parallel.
+            Five protection layers evaluated in parallel.
           </p>
         </div>
         <div className="relative inline-flex h-12 w-12 items-center justify-center">

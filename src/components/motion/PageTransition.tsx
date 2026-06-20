@@ -1,9 +1,11 @@
+"use client";
+
 import { motion, AnimatePresence } from "motion/react";
-import { useRouterState } from "@tanstack/react-router";
+import { usePathname } from "next/navigation";
 import type { ReactNode } from "react";
 
 export function PageTransition({ children }: { children: ReactNode }) {
-  const pathname = useRouterState({ select: (s) => s.location.pathname });
+  const pathname = usePathname();
   return (
     <AnimatePresence mode="wait">
       <motion.div

@@ -1,3 +1,5 @@
+"use client";
+
 import { motion } from "motion/react";
 import { useTheme } from "@/hooks/use-theme";
 

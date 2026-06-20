@@ -1,6 +1,15 @@
 import { motion } from "motion/react";
 import { SIGNAL_LABELS, type SignalKey } from "@/lib/mock-scan";
 
+/** Presentational layer names — maps signal keys to the 5-layer architecture story. */
+const LAYER_LABELS: Record<SignalKey, string> = {
+  wallet_reputation: "Wallet Intelligence",
+  recipient_history: "Risk Engine",
+  network_validation: "Settlement Protection",
+  contract_analysis: "Contract Intelligence",
+  simulation: "Transaction Simulation",
+};
+
 function Sparkline({ color = "var(--cyan)" }: { color?: string }) {
   const pts = [4, 8, 6, 10, 7, 12, 9, 14, 11, 18, 13, 22, 16, 24, 19, 28, 22, 30];
   const max = Math.max(...pts);
@@ -39,15 +48,15 @@ export function ProtectionEngine() {
           transition={{ duration: 0.6 }}
           className="max-w-3xl"
         >
-          <div className="eyebrow mb-4">Transaction Protection Engine</div>
+          <div className="eyebrow mb-4">Cardinal Protection Engine</div>
           <h2 className="font-display text-balance text-[clamp(34px,5vw,60px)] leading-[1] tracking-[-0.03em]">
-            Five signal classes.
+            Five protection layers.
             <br />
-            One verdict.
+            One risk verdict.
           </h2>
           <p className="mt-5 max-w-2xl text-[16px] leading-relaxed text-muted-foreground">
-            Wallet reputation, recipient history, network validation, contract
-            analysis, and full transaction simulation — fused into a single
+            Wallet intelligence, contract analysis, transaction simulation, risk
+            engine decisioning, and settlement protection — fused into a single
             verdict, with every finding traceable to its source.
           </p>
         </motion.div>
@@ -61,7 +70,7 @@ export function ProtectionEngine() {
         >
           {/* left rail */}
           <div className="border-b border-[var(--border)] p-5 md:border-b-0 md:border-r">
-            <div className="eyebrow mb-3">Signal classes</div>
+            <div className="eyebrow mb-3">Protection layers</div>
             <ul className="space-y-1">
               {(Object.keys(SIGNAL_LABELS) as SignalKey[]).map((s, i) => (
                 <li
@@ -76,7 +85,7 @@ export function ProtectionEngine() {
                         i === 0 ? "bg-cyan shadow-[0_0_8px_oklch(0.82_0.13_210)]" : "bg-[var(--border-strong)]"
                       }`}
                     />
-                    {SIGNAL_LABELS[s]}
+                    {LAYER_LABELS[s]}
                   </span>
                   <span className="font-mono text-[10.5px] uppercase tracking-wider">
                     {["12ms", "08ms", "04ms", "21ms", "31ms"][i]}
@@ -84,7 +93,7 @@ export function ProtectionEngine() {
                 </li>
               ))}
             </ul>
-            <div className="mt-6 rounded-xl border border-[var(--border)] bg-[oklch(0.17_0.011_250)] p-4">
+            <div className="mt-6 rounded-xl border border-[var(--border)] bg-surface-elevated/70 p-4">
               <div className="eyebrow mb-2">Latency budget</div>
               <div className="font-display text-2xl">76 ms</div>
               <div className="mt-2 text-[11.5px] text-muted-foreground">
@@ -101,17 +110,17 @@ export function ProtectionEngine() {
             </div>
             <div className="mt-4 grid grid-cols-3 gap-3">
               {[
-                ["94", "Allow rate", "emerald"],
+                ["94", "Low risk rate", "emerald"],
                 ["5.1", "Review rate", "amber"],
-                ["0.9", "Block rate", "red"],
+                ["0.9", "Critical rate", "red"],
               ].map(([v, l, c]) => (
-                <div key={l} className="rounded-xl border border-[var(--border)] bg-[oklch(0.17_0.011_250)] p-3">
+                <div key={l} className="rounded-xl border border-[var(--border)] bg-surface-elevated/70 p-3">
                   <div className={`font-display text-xl text-${c}`}>{v}%</div>
                   <div className="mt-1 text-[10.5px] uppercase tracking-wider text-muted-foreground">{l}</div>
                 </div>
               ))}
             </div>
-            <div className="mt-6 rounded-xl border border-[var(--border)] bg-[oklch(0.17_0.011_250)] p-4">
+            <div className="mt-6 rounded-xl border border-[var(--border)] bg-surface-elevated/70 p-4">
               <div className="flex items-center justify-between">
                 <div className="eyebrow">Throughput · last 60m</div>
                 <div className="font-mono text-[11px] text-foreground">12,408 tx/s</div>
@@ -141,7 +150,7 @@ export function ProtectionEngine() {
                   whileInView={{ opacity: 1, x: 0 }}
                   viewport={{ once: true }}
                   transition={{ duration: 0.4, delay: i * 0.08 }}
-                  className="rounded-md border border-[var(--border)] bg-[oklch(0.17_0.011_250)] px-3 py-2"
+                  className="rounded-md border border-[var(--border)] bg-surface-elevated/70 px-3 py-2"
                 >
                   <div className="flex items-center justify-between font-mono text-[10.5px] text-muted-foreground">
                     <span>{f.t}</span>

@@ -7,6 +7,28 @@ export const SAMPLE_ADDRESSES = [
 
 export type Verdict = "ALLOW" | "REVIEW" | "BLOCK";
 
+/** Display labels for verdicts — internal enum stays ALLOW/REVIEW/BLOCK. */
+export const VERDICT_DISPLAY: Record<
+  Verdict,
+  { short: string; label: string; recommendation: string }
+> = {
+  ALLOW: {
+    short: "Low risk",
+    label: "Low Risk · Proceed",
+    recommendation: "Proceed with settlement.",
+  },
+  REVIEW: {
+    short: "Review",
+    label: "Review Required · Verify Before Signing",
+    recommendation: "Verify before signing.",
+  },
+  BLOCK: {
+    short: "Critical",
+    label: "Critical Risk · Do Not Sign",
+    recommendation: "Do not sign.",
+  },
+};
+
 export type SignalKey =
   | "wallet_reputation"
   | "recipient_history"
