@@ -113,16 +113,16 @@ export function ScanSafeSendPage() {
 
   return (
     <div className="surface-card p-7">
-      <div className="flex items-center justify-between">
-        <div>
-          <div className="font-display text-[26px] tracking-tight">
+      <div className="flex items-start justify-between gap-4">
+        <div className="min-w-0 flex-1">
+          <div className="font-display text-[clamp(20px,5.5vw,26px)] tracking-tight">
             Cardinal Protection Engine · scanning
           </div>
           <p className="mt-1 text-[13.5px] text-muted-foreground">
             Five protection layers evaluated through the backend pre-sign gate.
           </p>
         </div>
-        <div className="relative inline-flex h-12 w-12 items-center justify-center">
+        <div className="relative inline-flex h-12 w-12 shrink-0 items-center justify-center">
           <span className="absolute inset-0 animate-ping-ring rounded-full bg-cyan/30" />
           <span className="relative inline-flex h-2.5 w-2.5 rounded-full bg-cyan shadow-[0_0_18px_oklch(0.82_0.13_210)]" />
         </div>
@@ -160,12 +160,12 @@ export function ScanSafeSendPage() {
             {scanError}
           </div>
         )}
-        <div className="mt-2 max-h-40 space-y-1 overflow-hidden font-mono text-[11.5px]">
+        <div className="mt-2 max-h-40 space-y-1 overflow-y-auto overscroll-contain font-mono text-[11.5px]">
           {logs.map((l, i) => (
             <div key={i} className="flex gap-3">
-              <span className="text-muted-foreground">{l.t}</span>
+              <span className="shrink-0 text-muted-foreground">{l.t}</span>
               <span
-                className={
+                className={`shrink-0 ${
                   l.lvl === "block"
                     ? "text-red"
                     : l.lvl === "warn"
@@ -173,11 +173,11 @@ export function ScanSafeSendPage() {
                       : l.lvl === "info"
                         ? "text-cyan"
                         : "text-emerald"
-                }
+                }`}
               >
                 [{l.lvl}]
               </span>
-              <span className="text-foreground/90">{l.txt}</span>
+              <span className="min-w-0 break-words [overflow-wrap:anywhere] text-foreground/90">{l.txt}</span>
             </div>
           ))}
         </div>

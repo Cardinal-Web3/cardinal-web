@@ -20,14 +20,14 @@ export function SafeSendWizardLayout({ children }: { children: React.ReactNode }
 
   return (
     <div className="mx-auto max-w-3xl">
-      <div className="flex items-center justify-between">
-        <div>
+      <div className="flex flex-wrap items-center justify-between gap-x-4 gap-y-1">
+        <div className="min-w-0">
           <div className="eyebrow mb-1">Create SafeSend</div>
           <div className="font-mono text-[12px] text-muted-foreground">
             step {String(idx + 1).padStart(2, "0")} / {String(STEPS.length).padStart(2, "0")} · {STEPS[idx]?.label}
           </div>
         </div>
-        <Link href="/app" className="text-[12.5px] text-muted-foreground hover:text-foreground">
+        <Link href="/app" className="shrink-0 text-[12.5px] text-muted-foreground hover:text-foreground">
           ← My SafeSends
         </Link>
       </div>

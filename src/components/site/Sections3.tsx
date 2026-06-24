@@ -7,6 +7,12 @@ import { CountUp } from "@/components/motion/CountUp";
 
 type Node = { x: number; y: number; tier: "idle" | "active" | "threat" };
 
+// Round to a fixed precision so SVG coordinates serialize identically on the
+// server and client. Math.cos/sin/sqrt may differ by ~1 ULP across JS engines
+// (the spec allows implementation-defined precision), which otherwise triggers
+// a React hydration mismatch.
+const r2 = (v: number) => Math.round(v * 100) / 100;
+
 function generateNodes(seed = 42): Node[] {
   const out: Node[] = [];
   // hot zones: NA(150,140), EU(380,120), SEA(560,170)
@@ -27,8 +33,8 @@ function generateNodes(seed = 42): Node[] {
       const tierR = rand();
       const tier: Node["tier"] = tierR > 0.9 ? "threat" : tierR > 0.55 ? "active" : "idle";
       out.push({
-        x: Math.max(20, Math.min(740, z.cx + Math.cos(a) * r)),
-        y: Math.max(20, Math.min(300, z.cy + Math.sin(a) * r)),
+        x: r2(Math.max(20, Math.min(740, z.cx + Math.cos(a) * r))),
+        y: r2(Math.max(20, Math.min(300, z.cy + Math.sin(a) * r))),
         tier,
       });
     }
@@ -133,10 +139,10 @@ export function ThreatMap() {
                 const dy = arc.b.y - arc.a.y;
                 const dist = Math.sqrt(dx * dx + dy * dy);
                 const lift = Math.min(dist * 0.35, 80);
-                const cp1x = arc.a.x + dx * 0.3;
-                const cp1y = Math.min(arc.a.y, arc.b.y) - lift;
-                const cp2x = arc.a.x + dx * 0.7;
-                const cp2y = Math.min(arc.a.y, arc.b.y) - lift * 0.8;
+                const cp1x = r2(arc.a.x + dx * 0.3);
+                const cp1y = r2(Math.min(arc.a.y, arc.b.y) - lift);
+                const cp2x = r2(arc.a.x + dx * 0.7);
+                const cp2y = r2(Math.min(arc.a.y, arc.b.y) - lift * 0.8);
                 const d = `M ${arc.a.x} ${arc.a.y} C ${cp1x} ${cp1y} ${cp2x} ${cp2y} ${arc.b.x} ${arc.b.y}`;
                 const dur = 3 + (i % 3) * 0.8;
                 return (
@@ -200,9 +206,9 @@ export function ThreatMap() {
               })}
             </svg>
 
-            <div className="font-mono absolute bottom-3 left-4 right-4 flex items-center justify-between text-[10.5px] uppercase tracking-wider text-muted-foreground">
+            <div className="font-mono absolute bottom-3 left-4 right-4 flex flex-wrap items-center justify-between gap-x-3 gap-y-1.5 text-[10px] uppercase tracking-wider text-muted-foreground sm:text-[10.5px]">
               <span>cardinal.threatnet · live</span>
-              <div className="flex items-center gap-3">
+              <div className="flex flex-wrap items-center gap-x-3 gap-y-1.5">
                 <span className="flex items-center gap-1.5"><span className="inline-flex h-1.5 w-1.5 rounded-full bg-cyan/70" /> active</span>
                 <span className="flex items-center gap-1.5"><span className="inline-flex h-1.5 w-1.5 rounded-full bg-red" /> threat</span>
                 <span className="text-emerald">● 12 regions</span>
@@ -405,7 +411,7 @@ export function Pilot() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.5, delay: 0.4 }}
-          className="mt-10 flex justify-center gap-3"
+          className="mt-10 flex flex-wrap justify-center gap-3"
         >
           <Link
             href="/pilot"

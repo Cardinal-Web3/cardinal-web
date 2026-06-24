@@ -119,10 +119,10 @@ export function SafeSendDashboardPage() {
 
   return (
     <div className="mx-auto max-w-5xl">
-      <div className="flex items-end justify-between">
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
         <div>
           <div className="eyebrow mb-2">SafeSends</div>
-          <h1 className="font-display text-[40px] leading-none tracking-[-0.03em]">
+          <h1 className="font-display text-[clamp(28px,8vw,40px)] leading-none tracking-[-0.03em]">
             My SafeSends
           </h1>
           <p className="mt-2 text-[14px] text-muted-foreground">
@@ -131,7 +131,7 @@ export function SafeSendDashboardPage() {
         </div>
         <Link
           href="/app/new"
-          className="inline-flex items-center gap-2 rounded-full bg-foreground px-5 py-2.5 text-[13.5px] font-medium text-background transition hover:bg-cyan"
+          className="inline-flex w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 py-2.5 text-[13.5px] font-medium text-background transition hover:bg-cyan sm:w-auto"
         >
           + New SafeSend
         </Link>

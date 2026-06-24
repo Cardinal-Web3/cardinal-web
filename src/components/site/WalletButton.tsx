@@ -72,7 +72,7 @@ export function WalletModal() {
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.97, y: 8 }}
             transition={{ type: "spring", stiffness: 280, damping: 26 }}
-            className="relative w-full max-w-[420px] overflow-hidden rounded-[24px] border border-[var(--border-strong)] bg-background/92 p-5 shadow-[0_28px_90px_oklch(0_0_0_/_0.55)] backdrop-blur-2xl sm:p-6"
+            className="relative max-h-[calc(100dvh-2rem)] w-full max-w-[420px] overflow-y-auto overscroll-contain rounded-[24px] border border-[var(--border-strong)] bg-background/92 p-5 shadow-[0_28px_90px_oklch(0_0_0_/_0.55)] backdrop-blur-2xl sm:p-6"
           >
             <div className="pointer-events-none absolute inset-x-8 top-0 h-px bg-gradient-to-r from-transparent via-cyan/80 to-transparent" />
             <div className="pointer-events-none absolute -right-24 -top-24 h-56 w-56 rounded-full bg-cyan/10 blur-3xl" />
@@ -153,7 +153,7 @@ export function WalletModal() {
               </div>
             )}
 
-            <div className="mt-5 flex items-center justify-between border-t border-[var(--border)] pt-4 text-[11px] text-muted-foreground">
+            <div className="mt-5 flex flex-wrap items-center justify-between gap-2 border-t border-[var(--border)] pt-4 text-[11px] text-muted-foreground">
               <span>MetaMask required for pilot testing</span>
               <button onClick={closeModal} className="rounded-full px-2 py-1 transition hover:bg-surface hover:text-foreground">
                 Cancel

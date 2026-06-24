@@ -5,11 +5,11 @@ export function CTABand() {
   const [email, setEmail] = useState("");
   const [sent, setSent] = useState(false);
   return (
-    <section className="relative px-6 py-32">
+    <section className="relative overflow-hidden px-6 py-20 sm:py-32">
       <div className="mx-auto max-w-3xl text-center">
         {/* ambient glow */}
         <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
-          <div className="h-[340px] w-[600px] rounded-full bg-cyan/[0.04] blur-[100px]" />
+          <div className="h-[340px] w-full max-w-[600px] rounded-full bg-cyan/[0.04] blur-[100px]" />
         </div>
 
         <motion.div

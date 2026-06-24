@@ -8,6 +8,7 @@ import { Problem, HowItWorks } from "@/components/site/Sections1";
 import { ProtectionEngine } from "@/components/site/ProtectionEngine";
 import { SafeSendShowcase, Escrow } from "@/components/site/Sections2";
 import { ThreatMap, Partners, Pilot } from "@/components/site/Sections3";
+import { WhitepaperCallout } from "@/components/site/WhitepaperCallout";
 import { FAQ } from "@/components/site/FAQ";
 import { CTABand } from "@/components/site/CTABand";
 
@@ -26,6 +27,7 @@ export function HomePage() {
         <ThreatMap />
         <Partners />
         <Pilot />
+        <WhitepaperCallout />
         <FAQ />
         <CTABand />
       </main>

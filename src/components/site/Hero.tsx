@@ -119,10 +119,6 @@ export function Hero() {
               <Stat value={<CountUp to={48} format={(n) => `${n}k`} />} label="Threats blocked" />
               <Stat value={<CountUp to={12} suffix=" ms" />} label="Avg verdict" />
             </div>
-            <div className="mt-4 h-px w-full bg-gradient-to-r from-[var(--border)] via-[var(--border)] to-transparent" />
-            <p className="mt-3 font-mono text-[10.5px] uppercase tracking-[0.16em] text-muted-foreground/60">
-              Cumulative · pilot demo network
-            </p>
           </motion.div>
         </div>
       </div>

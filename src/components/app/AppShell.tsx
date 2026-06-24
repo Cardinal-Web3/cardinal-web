@@ -99,12 +99,12 @@ export function AppShell({ children }: { children?: React.ReactNode }) {
           </div>
         </header>
 
-        <main className="flex-1 px-4 py-6 pb-24 sm:px-6 sm:py-8 md:pb-8">
+        <main className="flex-1 px-4 py-6 pb-[calc(6.5rem+env(safe-area-inset-bottom))] sm:px-6 sm:py-8 md:pb-8">
           {children}
         </main>
 
         {/* mobile bottom tab bar */}
-        <nav className="fixed inset-x-3 bottom-3 z-40 flex items-center justify-around rounded-full border border-[var(--border-strong)] bg-background/80 px-2 py-1.5 backdrop-blur-xl md:hidden">
+        <nav className="fixed inset-x-3 bottom-[max(0.75rem,env(safe-area-inset-bottom))] z-40 flex items-center justify-around rounded-full border border-[var(--border-strong)] bg-background/80 px-2 py-1.5 backdrop-blur-xl md:hidden">
           {NAV.map((n) => {
             const active = pathname === n.to || (n.to !== "/app" && pathname.startsWith(n.to));
             return (

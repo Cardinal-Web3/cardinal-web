@@ -108,15 +108,15 @@ export function ProtectionEngine() {
               <div className="eyebrow">Live risk surface</div>
               <div className="font-mono text-[11px] text-emerald">● streaming</div>
             </div>
-            <div className="mt-4 grid grid-cols-3 gap-3">
+            <div className="mt-4 grid grid-cols-3 gap-2 sm:gap-3">
               {[
-                ["94", "Low risk rate", "emerald"],
-                ["5.1", "Review rate", "amber"],
-                ["0.9", "Critical rate", "red"],
+                ["94", "Low risk rate", "text-emerald"],
+                ["5.1", "Review rate", "text-amber"],
+                ["0.9", "Critical rate", "text-red"],
               ].map(([v, l, c]) => (
-                <div key={l} className="rounded-xl border border-[var(--border)] bg-surface-elevated/70 p-3">
-                  <div className={`font-display text-xl text-${c}`}>{v}%</div>
-                  <div className="mt-1 text-[10.5px] uppercase tracking-wider text-muted-foreground">{l}</div>
+                <div key={l} className="rounded-xl border border-[var(--border)] bg-surface-elevated/70 p-2.5 sm:p-3">
+                  <div className={`font-display text-lg sm:text-xl ${c}`}>{v}%</div>
+                  <div className="mt-1 text-[10px] uppercase tracking-wider text-muted-foreground sm:text-[10.5px]">{l}</div>
                 </div>
               ))}
             </div>
@@ -168,7 +168,7 @@ export function ProtectionEngine() {
                       {f.lvl}
                     </span>
                   </div>
-                  <div className="mt-1 font-mono text-[12px] text-foreground/90">
+                  <div className="mt-1 font-mono text-[12px] text-foreground/90 break-words [overflow-wrap:anywhere]">
                     {f.txt}
                   </div>
                 </motion.div>

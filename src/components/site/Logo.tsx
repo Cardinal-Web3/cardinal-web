@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { motion } from "motion/react";
+import { useId } from "react";
 
 export function LogoMark({
   size = 28,
@@ -12,6 +13,12 @@ export function LogoMark({
   className?: string;
   animated?: boolean;
 }) {
+  // Unique gradient id per instance — otherwise multiple LogoMarks share
+  // `#logoGrad`, and browsers resolve the paint server to the first match,
+  // which may live in a `display:none` subtree (e.g. the hidden desktop
+  // sidebar on mobile) and fail to render, leaving the mark invisible.
+  const gradId = useId();
+  const grad = `url(#${gradId})`;
   return (
     <motion.svg
       width={size}
@@ -26,7 +33,7 @@ export function LogoMark({
       aria-hidden
     >
       <defs>
-        <linearGradient id="logoGrad" x1="8" y1="4" x2="56" y2="60" gradientUnits="userSpaceOnUse">
+        <linearGradient id={gradId} x1="8" y1="4" x2="56" y2="60" gradientUnits="userSpaceOnUse">
           <stop offset="0%" stopColor="var(--cyan)" />
           <stop offset="100%" stopColor="var(--violet)" />
         </linearGradient>
@@ -35,28 +42,28 @@ export function LogoMark({
       {/* circular arc segments — compass ring */}
       <path
         d="M 32 6 A 26 26 0 0 1 52 14"
-        stroke="url(#logoGrad)"
+        stroke={grad}
         strokeWidth="2.2"
         strokeLinecap="round"
         fill="none"
       />
       <path
         d="M 52 50 A 26 26 0 0 1 32 58"
-        stroke="url(#logoGrad)"
+        stroke={grad}
         strokeWidth="2.2"
         strokeLinecap="round"
         fill="none"
       />
       <path
         d="M 12 50 A 26 26 0 0 1 6 32"
-        stroke="url(#logoGrad)"
+        stroke={grad}
         strokeWidth="2.2"
         strokeLinecap="round"
         fill="none"
       />
       <path
         d="M 58 32 A 26 26 0 0 1 52 50"
-        stroke="url(#logoGrad)"
+        stroke={grad}
         strokeWidth="2.2"
         strokeLinecap="round"
         fill="none"
@@ -64,7 +71,7 @@ export function LogoMark({
       />
       <path
         d="M 32 58 A 26 26 0 0 1 12 50"
-        stroke="url(#logoGrad)"
+        stroke={grad}
         strokeWidth="2.2"
         strokeLinecap="round"
         fill="none"
@@ -72,7 +79,7 @@ export function LogoMark({
       />
       <path
         d="M 6 32 A 26 26 0 0 1 12 14"
-        stroke="url(#logoGrad)"
+        stroke={grad}
         strokeWidth="2.2"
         strokeLinecap="round"
         fill="none"
@@ -80,7 +87,7 @@ export function LogoMark({
       />
       <path
         d="M 12 14 A 26 26 0 0 1 32 6"
-        stroke="url(#logoGrad)"
+        stroke={grad}
         strokeWidth="2.2"
         strokeLinecap="round"
         fill="none"
@@ -88,7 +95,7 @@ export function LogoMark({
       />
       <path
         d="M 52 14 A 26 26 0 0 1 58 32"
-        stroke="url(#logoGrad)"
+        stroke={grad}
         strokeWidth="2.2"
         strokeLinecap="round"
         fill="none"
@@ -96,48 +103,48 @@ export function LogoMark({
       />
 
       {/* cardinal arrows — N */}
-      <line x1="32" y1="22" x2="32" y2="10" stroke="url(#logoGrad)" strokeWidth="2" strokeLinecap="round" />
-      <polyline points="28,14 32,9 36,14" stroke="url(#logoGrad)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" fill="none" />
+      <line x1="32" y1="22" x2="32" y2="10" stroke={grad} strokeWidth="2" strokeLinecap="round" />
+      <polyline points="28,14 32,9 36,14" stroke={grad} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" fill="none" />
 
       {/* cardinal arrows — S */}
-      <line x1="32" y1="42" x2="32" y2="54" stroke="url(#logoGrad)" strokeWidth="2" strokeLinecap="round" />
-      <polyline points="28,50 32,55 36,50" stroke="url(#logoGrad)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" fill="none" />
+      <line x1="32" y1="42" x2="32" y2="54" stroke={grad} strokeWidth="2" strokeLinecap="round" />
+      <polyline points="28,50 32,55 36,50" stroke={grad} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" fill="none" />
 
       {/* cardinal arrows — E */}
-      <line x1="42" y1="32" x2="54" y2="32" stroke="url(#logoGrad)" strokeWidth="2" strokeLinecap="round" />
-      <polyline points="50,28 55,32 50,36" stroke="url(#logoGrad)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" fill="none" />
+      <line x1="42" y1="32" x2="54" y2="32" stroke={grad} strokeWidth="2" strokeLinecap="round" />
+      <polyline points="50,28 55,32 50,36" stroke={grad} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" fill="none" />
 
       {/* cardinal arrows — W */}
-      <line x1="22" y1="32" x2="10" y2="32" stroke="url(#logoGrad)" strokeWidth="2" strokeLinecap="round" />
-      <polyline points="14,28 9,32 14,36" stroke="url(#logoGrad)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" fill="none" />
+      <line x1="22" y1="32" x2="10" y2="32" stroke={grad} strokeWidth="2" strokeLinecap="round" />
+      <polyline points="14,28 9,32 14,36" stroke={grad} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" fill="none" />
 
       {/* diagonal arrows — NE */}
-      <line x1="39" y1="25" x2="47" y2="17" stroke="url(#logoGrad)" strokeWidth="1.5" strokeLinecap="round" opacity="0.7" />
-      <polyline points="43,17 47,17 47,21" stroke="url(#logoGrad)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" fill="none" opacity="0.7" />
+      <line x1="39" y1="25" x2="47" y2="17" stroke={grad} strokeWidth="1.5" strokeLinecap="round" opacity="0.7" />
+      <polyline points="43,17 47,17 47,21" stroke={grad} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" fill="none" opacity="0.7" />
 
       {/* diagonal arrows — NW */}
-      <line x1="25" y1="25" x2="17" y2="17" stroke="url(#logoGrad)" strokeWidth="1.5" strokeLinecap="round" opacity="0.7" />
-      <polyline points="17,21 17,17 21,17" stroke="url(#logoGrad)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" fill="none" opacity="0.7" />
+      <line x1="25" y1="25" x2="17" y2="17" stroke={grad} strokeWidth="1.5" strokeLinecap="round" opacity="0.7" />
+      <polyline points="17,21 17,17 21,17" stroke={grad} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" fill="none" opacity="0.7" />
 
       {/* diagonal arrows — SE */}
-      <line x1="39" y1="39" x2="47" y2="47" stroke="url(#logoGrad)" strokeWidth="1.5" strokeLinecap="round" opacity="0.7" />
-      <polyline points="47,43 47,47 43,47" stroke="url(#logoGrad)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" fill="none" opacity="0.7" />
+      <line x1="39" y1="39" x2="47" y2="47" stroke={grad} strokeWidth="1.5" strokeLinecap="round" opacity="0.7" />
+      <polyline points="47,43 47,47 43,47" stroke={grad} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" fill="none" opacity="0.7" />
 
       {/* diagonal arrows — SW */}
-      <line x1="25" y1="39" x2="17" y2="47" stroke="url(#logoGrad)" strokeWidth="1.5" strokeLinecap="round" opacity="0.7" />
-      <polyline points="21,47 17,47 17,43" stroke="url(#logoGrad)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" fill="none" opacity="0.7" />
+      <line x1="25" y1="39" x2="17" y2="47" stroke={grad} strokeWidth="1.5" strokeLinecap="round" opacity="0.7" />
+      <polyline points="21,47 17,47 17,43" stroke={grad} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" fill="none" opacity="0.7" />
 
       {/* padlock body */}
       <rect
         x="25" y="30" width="14" height="11" rx="2"
-        fill="url(#logoGrad)"
+        fill={grad}
         opacity="0.9"
       />
 
       {/* padlock shackle */}
       <path
         d="M 28 30 L28 26 A 4 4 0 0 1 36 26 L36 30"
-        stroke="url(#logoGrad)"
+        stroke={grad}
         strokeWidth="2.2"
         strokeLinecap="round"
         fill="none"

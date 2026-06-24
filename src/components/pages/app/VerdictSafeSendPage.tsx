@@ -60,8 +60,8 @@ export function VerdictSafeSendPage() {
     <div className={`surface-card relative overflow-hidden p-7 ${v.glow}`}>
       <div className="aurora pointer-events-none absolute -inset-32 opacity-30" />
       <div className="relative">
-        <div className="flex items-start justify-between">
-          <div>
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+          <div className="min-w-0">
             <div className="eyebrow mb-2">Cardinal verdict</div>
             <div className={`font-display text-[clamp(28px,5vw,44px)] leading-tight ${v.text}`}>
               {v.label}
@@ -76,7 +76,7 @@ export function VerdictSafeSendPage() {
               )}
             </div>
           </div>
-          <div className={`rounded-2xl border ${v.ring} ${v.bg} px-5 py-4 text-center`}>
+          <div className={`shrink-0 self-start rounded-2xl border ${v.ring} ${v.bg} px-5 py-4 text-center`}>
             <div className="eyebrow mb-1">Risk score</div>
             <div className={`font-display text-3xl ${v.text}`}>{scan.score}</div>
             <div className="mt-0.5 font-mono text-[10px] text-muted-foreground">/ 100</div>
@@ -126,18 +126,18 @@ export function VerdictSafeSendPage() {
           </div>
         </div>
 
-        <div className="mt-8 flex items-center justify-between border-t border-[var(--border)] pt-6">
+        <div className="mt-8 flex flex-col gap-3 border-t border-[var(--border)] pt-6 sm:flex-row sm:items-center sm:justify-between">
           <button
             onClick={() => router.push("/app/new")}
-            className="rounded-full border border-[var(--border-strong)] bg-surface-elevated px-4 py-2 text-[13px] transition hover:border-foreground"
+            className="w-full rounded-full border border-[var(--border-strong)] bg-surface-elevated px-4 py-2 text-[13px] transition hover:border-foreground sm:w-auto"
           >
             ← Edit transaction
           </button>
-          <div className="flex gap-2">
+          <div className="flex flex-col gap-2 sm:flex-row">
             {scan.verdict !== "ALLOW" && (
               <button
                 onClick={() => router.push("/app")}
-                className="rounded-full border border-[var(--border-strong)] bg-surface px-4 py-2 text-[13px] transition hover:border-cyan"
+                className="w-full rounded-full border border-[var(--border-strong)] bg-surface px-4 py-2 text-[13px] transition hover:border-cyan sm:w-auto"
               >
                 Cancel
               </button>
@@ -147,7 +147,7 @@ export function VerdictSafeSendPage() {
                 if (canProceed) router.push("/app/new/confirm");
               }}
               disabled={!canProceed}
-              className={`rounded-full px-5 py-2 text-[13.5px] font-medium transition ${
+              className={`w-full rounded-full px-5 py-2 text-[13.5px] font-medium transition sm:w-auto ${
                 scan.verdict === "BLOCK"
                   ? "cursor-not-allowed border border-red/60 bg-red/10 text-red opacity-70"
                   : scan.verdict === "REVIEW"
@@ -166,9 +166,9 @@ export function VerdictSafeSendPage() {
 
 function MetaPill({ label, value }: { label: string; value: string }) {
   return (
-    <div className="rounded-full border border-[var(--border)] bg-surface-elevated/75 px-3 py-1 font-mono text-[10.5px] uppercase tracking-wider">
-      <span className="text-muted-foreground">{label}: </span>
-      <span className="text-foreground/90">{value}</span>
+    <div className="inline-flex max-w-full items-center rounded-full border border-[var(--border)] bg-surface-elevated/75 px-3 py-1 font-mono text-[10.5px] uppercase tracking-wider">
+      <span className="shrink-0 text-muted-foreground">{label}:&nbsp;</span>
+      <span className="truncate text-foreground/90">{value}</span>
     </div>
   );
 }

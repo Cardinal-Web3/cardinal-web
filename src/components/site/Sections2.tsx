@@ -44,7 +44,7 @@ export function SafeSendShowcase() {
               </motion.li>
             ))}
           </ul>
-          <div className="mt-9 flex gap-3">
+          <div className="mt-9 flex flex-wrap gap-3">
             <Link
               href="/app/new"
               className="inline-flex items-center gap-2 rounded-full bg-foreground px-5 py-2.5 text-[13.5px] font-medium text-background transition hover:bg-cyan"
@@ -67,7 +67,7 @@ export function SafeSendShowcase() {
           transition={{ duration: 0.7 }}
           className="surface-card relative overflow-hidden p-6"
         >
-          <div className="flex items-center justify-between">
+          <div className="flex flex-wrap items-center justify-between gap-2">
             <div className="eyebrow">SafeSend · draft</div>
             <div className="inline-flex items-center gap-1.5 rounded-full border border-emerald/40 bg-emerald/10 px-2.5 py-1 text-[10.5px] text-emerald">
               <span className="inline-flex h-1.5 w-1.5 rounded-full bg-emerald shadow-[0_0_8px_oklch(0.76_0.16_155)]" />
@@ -139,7 +139,7 @@ export function SafeSendShowcase() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.4, delay: 0.6 }}
-            className="mt-6 flex items-center justify-between rounded-xl border border-[var(--border)] bg-surface-elevated/70 px-4 py-3"
+            className="mt-6 flex flex-col gap-3 rounded-xl border border-[var(--border)] bg-surface-elevated/70 px-4 py-3 sm:flex-row sm:items-center sm:justify-between"
           >
             <div className="text-[12.5px] text-muted-foreground">
               Status · funds will lock on signature
@@ -147,7 +147,7 @@ export function SafeSendShowcase() {
             <motion.button
               whileHover={{ scale: 1.04 }}
               whileTap={{ scale: 0.97 }}
-              className="inline-flex items-center gap-2 rounded-full bg-foreground px-4 py-1.5 text-[12.5px] font-medium text-background transition-colors hover:bg-cyan"
+              className="inline-flex w-full items-center justify-center gap-2 rounded-full bg-foreground px-4 py-2 text-[12.5px] font-medium text-background transition-colors hover:bg-cyan sm:w-auto sm:py-1.5"
             >
               Sign & lock
             </motion.button>
@@ -204,12 +204,12 @@ export function Escrow() {
             transition={{ duration: 0.6 }}
             className="surface-card overflow-hidden p-6"
           >
-            <div className="relative grid grid-cols-4 gap-3">
+            <div className="relative grid grid-cols-2 gap-4 sm:grid-cols-4 sm:gap-3">
               {steps.map(([t, d], i) => (
                 <div key={t} className="relative z-10 text-center">
-                  {/* connector line to next step */}
+                  {/* connector line to next step — desktop horizontal layout only */}
                   {i < steps.length - 1 && (
-                    <div className="absolute left-[calc(50%+24px)] right-[calc(-50%+24px)] top-5 z-0 h-px bg-[var(--border-strong)]">
+                    <div className="absolute left-[calc(50%+24px)] right-[calc(-50%+24px)] top-5 z-0 hidden h-px bg-[var(--border-strong)] sm:block">
                       <div className="h-full w-full bg-gradient-to-r from-cyan/50 to-cyan/20" />
                     </div>
                   )}
@@ -222,7 +222,7 @@ export function Escrow() {
               ))}
             </div>
 
-            <div className="mt-8 grid grid-cols-3 gap-3">
+            <div className="mt-8 grid grid-cols-3 gap-2 sm:gap-3">
               {[
                 ["$48M", "Projected in-flight"],
                 ["12,408", "Target vault capacity"],

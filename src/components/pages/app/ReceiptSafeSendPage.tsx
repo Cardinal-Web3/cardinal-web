@@ -41,13 +41,13 @@ export function ReceiptSafeSendPage() {
     >
       <div className="aurora pointer-events-none absolute -inset-32 opacity-25" />
       <div className="relative">
-        <div className="flex items-center justify-between">
-          <div>
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+          <div className="min-w-0">
             <div className="eyebrow mb-2">
               {blocked ? "Critical Risk · Do Not Sign" : "Protected settlement"}
             </div>
             <div
-              className={`font-display text-[44px] leading-none ${blocked ? "text-red" : "text-emerald"}`}
+              className={`font-display text-[clamp(30px,9vw,44px)] leading-none ${blocked ? "text-red" : "text-emerald"}`}
             >
               {blocked ? "Do Not Sign" : "Locked"}
             </div>
@@ -57,7 +57,7 @@ export function ReceiptSafeSendPage() {
                 : "Funds are protected by SafeSend and will release after the delay window."}
             </p>
           </div>
-          <div className="rounded-xl border border-[var(--border)] bg-surface-elevated/70 px-4 py-3 text-center font-mono">
+          <div className="shrink-0 self-start rounded-xl border border-[var(--border)] bg-surface-elevated/70 px-4 py-3 text-center font-mono">
             <div className="text-[10.5px] uppercase tracking-wider text-muted-foreground">
               transfer
             </div>
@@ -197,7 +197,7 @@ function Detail({ label, value }: { label: string; value: React.ReactNode }) {
   return (
     <div className="rounded-xl border border-[var(--border)] bg-surface-elevated/70 px-4 py-3">
       <div className="eyebrow mb-1">{label}</div>
-      <div className="text-[14px]">{value}</div>
+      <div className="text-[14px] break-words [overflow-wrap:anywhere]">{value}</div>
     </div>
   );
 }
