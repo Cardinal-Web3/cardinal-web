@@ -8,7 +8,9 @@ import { useEffect, useState } from "react";
 
 const NAV = [
   { label: "SafeSend", to: "/safesend" },
+  { label: "Whitepaper", to: "/whitepaper" },
   { label: "Partners", to: "/partners" },
+  { label: "API", to: "/api-docs" },
   { label: "Pilot", to: "/pilot" },
 ];
 
@@ -26,8 +28,8 @@ export function Nav() {
       <div
         className={`flex w-full max-w-6xl items-center justify-between gap-2 rounded-full border px-3 py-2 transition-all duration-500 sm:px-4 ${
           scrolled
-            ? "border-[var(--border)]/60 bg-background/50 shadow-[0_8px_32px_-12px_rgba(0,0,0,0.25)] backdrop-blur-2xl backdrop-saturate-150"
-            : "border-transparent bg-transparent"
+            ? "border-[var(--border)]/60 bg-background/80 shadow-[0_8px_32px_-12px_rgba(0,0,0,0.25)] backdrop-blur-2xl backdrop-saturate-150"
+            : "border-[var(--border)]/40 bg-background/75 shadow-[0_4px_24px_-12px_rgba(0,0,0,0.18)] backdrop-blur-2xl backdrop-saturate-150"
         }`}
       >
         <Logo />

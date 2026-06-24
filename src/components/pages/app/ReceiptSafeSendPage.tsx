@@ -5,6 +5,7 @@ import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useSafeSends } from "@/lib/safesend-store";
 import { shortAddr } from "@/lib/mock-scan";
+import { explorerTxUrl } from "@/lib/safesend-contract";
 
 export function ReceiptSafeSendPage() {
   const params = useParams<{ id: string }>();
@@ -35,13 +36,19 @@ export function ReceiptSafeSendPage() {
   const s = Math.floor((remain % 60_000) / 1000);
 
   return (
-    <div className={`surface-card relative overflow-hidden p-7 ${blocked ? "shadow-[var(--shadow-glow-red)]" : "shadow-[var(--shadow-glow-emerald)]"}`}>
+    <div
+      className={`surface-card relative overflow-hidden p-7 ${blocked ? "shadow-[var(--shadow-glow-red)]" : "shadow-[var(--shadow-glow-emerald)]"}`}
+    >
       <div className="aurora pointer-events-none absolute -inset-32 opacity-25" />
       <div className="relative">
         <div className="flex items-center justify-between">
           <div>
-            <div className="eyebrow mb-2">{blocked ? "Critical Risk · Do Not Sign" : "Protected settlement"}</div>
-            <div className={`font-display text-[44px] leading-none ${blocked ? "text-red" : "text-emerald"}`}>
+            <div className="eyebrow mb-2">
+              {blocked ? "Critical Risk · Do Not Sign" : "Protected settlement"}
+            </div>
+            <div
+              className={`font-display text-[44px] leading-none ${blocked ? "text-red" : "text-emerald"}`}
+            >
               {blocked ? "Do Not Sign" : "Locked"}
             </div>
             <p className="mt-2 max-w-md text-[13.5px] text-muted-foreground">
@@ -51,34 +58,132 @@ export function ReceiptSafeSendPage() {
             </p>
           </div>
           <div className="rounded-xl border border-[var(--border)] bg-surface-elevated/70 px-4 py-3 text-center font-mono">
-            <div className="text-[10.5px] uppercase tracking-wider text-muted-foreground">tx id</div>
-            <div className="mt-1 text-[12px]">{send.id}</div>
+            <div className="text-[10.5px] uppercase tracking-wider text-muted-foreground">
+              transfer
+            </div>
+            <div className="mt-1 text-[12px]">
+              {send.transferId ? `#${send.transferId}` : send.id}
+            </div>
           </div>
         </div>
 
         <div className="mt-7 grid gap-3 md:grid-cols-2">
-          <Detail label="Recipient" value={<span className="font-mono">{shortAddr(send.recipient, 6)}</span>} />
-          <Detail label="Amount" value={<>{send.amount.toLocaleString()} <span className="text-muted-foreground">{send.token}</span></>} />
+          <Detail
+            label="Recipient"
+            value={<span className="font-mono">{shortAddr(send.recipient, 6)}</span>}
+          />
+          <Detail
+            label="Amount"
+            value={
+              <>
+                {send.amount.toLocaleString()}{" "}
+                <span className="text-muted-foreground">{send.token}</span>
+              </>
+            }
+          />
+          {typeof send.feeAmount === "number" && (
+            <Detail
+              label="Cardinal fee"
+              value={
+                <>
+                  {send.feeAmount} <span className="text-muted-foreground">{send.token}</span>
+                </>
+              }
+            />
+          )}
+          {typeof send.recipientAmount === "number" && (
+            <Detail
+              label="Recipient receives"
+              value={
+                <span className="text-emerald">
+                  {send.recipientAmount}{" "}
+                  <span className="text-muted-foreground">{send.token}</span>
+                </span>
+              }
+            />
+          )}
+          {send.gasEstimateEth && (
+            <Detail
+              label="Estimated gas"
+              value={<span className="font-mono">~{send.gasEstimateEth} ETH</span>}
+            />
+          )}
+          <Detail
+            label="Protection mode"
+            value={send.mode === "live_contract" ? "Live contract" : send.scan?.mode === "live" ? "Live backend" : "Demo"}
+          />
+          {send.scan?.requestId && (
+            <Detail
+              label="Scan request"
+              value={<span className="font-mono">{send.scan.requestId}</span>}
+            />
+          )}
           {!blocked && (
             <>
-              <Detail label="Releases in" value={<span className="font-mono text-cyan">{h}h {String(m).padStart(2, "0")}m {String(s).padStart(2, "0")}s</span>} />
-              <Detail label="Cancel window" value={<span className="font-mono text-amber">open</span>} />
+              <Detail
+                label="Releases in"
+                value={
+                  <span className="font-mono text-cyan">
+                    {h}h {String(m).padStart(2, "0")}m {String(s).padStart(2, "0")}s
+                  </span>
+                }
+              />
+              <Detail
+                label="Cancel window"
+                value={<span className="font-mono text-amber">open</span>}
+              />
             </>
+          )}
+          {send.txHash && (
+            <Detail
+              label="SafeSend tx"
+              value={
+                <a
+                  href={explorerTxUrl(send.txHash)}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="font-mono text-cyan hover:underline"
+                >
+                  {shortAddr(send.txHash, 8)} →
+                </a>
+              }
+            />
+          )}
+          {send.approvalTxHash && (
+            <Detail
+              label="Approval tx"
+              value={
+                <a
+                  href={explorerTxUrl(send.approvalTxHash)}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="font-mono text-cyan hover:underline"
+                >
+                  {shortAddr(send.approvalTxHash, 8)} →
+                </a>
+              }
+            />
           )}
         </div>
 
-        <div className="mt-8 flex items-center justify-between border-t border-[var(--border)] pt-6">
+        <div className="mt-8 flex flex-col gap-3 border-t border-[var(--border)] pt-6 sm:flex-row sm:items-center sm:justify-between">
           <button
-            onClick={() => navigator.clipboard?.writeText(send.id)}
+            onClick={() => navigator.clipboard?.writeText(send.txHash ?? send.id)}
             className="rounded-full border border-[var(--border-strong)] bg-surface-elevated px-4 py-2 text-[13px] transition hover:border-cyan hover:text-cyan"
           >
-            Copy tx id
+            Copy tx
           </button>
-          <div className="flex gap-2">
-            <Link href="/app/new" className="rounded-full border border-[var(--border-strong)] bg-surface-elevated px-4 py-2 text-[13px] transition hover:border-foreground">
+          <div className="flex flex-wrap gap-2">
+            <Link
+              href="/app/new"
+              className="rounded-full border border-[var(--border-strong)] bg-surface-elevated px-4 py-2 text-[13px] transition hover:border-foreground"
+            >
               New SafeSend
             </Link>
-            <Link href="/app" className="rounded-full bg-foreground px-5 py-2 text-[13px] font-medium text-background transition hover:bg-cyan">
+            <Link
+              href="/app"
+              className="rounded-full bg-foreground px-5 py-2 text-[13px] font-medium text-background transition hover:bg-cyan"
+            >
               Go to dashboard →
             </Link>
           </div>

@@ -4,13 +4,14 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useSafeSends } from "@/lib/safesend-store";
 import { SAMPLE_ADDRESSES } from "@/lib/mock-scan";
+import { SAFESEND_TOKENS } from "@/lib/safesend-contract";
 
 export function ComposeSafeSendPage() {
   const router = useRouter();
   const { drafts, setDraft } = useSafeSends();
   const d = drafts["new"] ?? {};
   const [recipient, setRecipient] = useState<string>(d.recipient ?? "");
-  const [token, setToken] = useState<string>(d.token ?? "USDC");
+  const [token, setToken] = useState<string>(d.token ?? SAFESEND_TOKENS[0].symbol);
   const [amount, setAmount] = useState<string>(d.amount ? String(d.amount) : "");
   const [delay, setDelay] = useState<number>(d.delayHours ?? 24);
   const [cancelWindow, setCancelWindow] = useState<number>(d.cancelWindowHours ?? 24);
@@ -28,6 +29,8 @@ export function ComposeSafeSendPage() {
       delayHours: delay,
       cancelWindowHours: cancelWindow,
       memo,
+      verdict: undefined,
+      scan: undefined,
     });
     router.push("/app/new/scan");
   }
@@ -50,7 +53,9 @@ export function ComposeSafeSendPage() {
               className="w-full rounded-xl border border-[var(--border-strong)] bg-surface-elevated/70 px-4 py-3 font-mono text-[13.5px] focus:border-cyan focus:outline-none"
             />
             {recipient && (
-              <div className={`mt-1.5 font-mono text-[11px] ${validRecipient ? "text-emerald" : "text-red"}`}>
+              <div
+                className={`mt-1.5 font-mono text-[11px] ${validRecipient ? "text-emerald" : "text-red"}`}
+              >
                 {validRecipient ? "valid address format" : "expected 0x + 40 hex chars"}
               </div>
             )}
@@ -70,7 +75,7 @@ export function ComposeSafeSendPage() {
           </div>
         </div>
 
-        <div className="grid grid-cols-[140px_1fr] gap-3">
+        <div className="grid gap-3 sm:grid-cols-[160px_1fr]">
           <div>
             <Label>Token</Label>
             <select
@@ -78,10 +83,15 @@ export function ComposeSafeSendPage() {
               onChange={(e) => setToken(e.target.value)}
               className="w-full rounded-xl border border-[var(--border-strong)] bg-surface-elevated/70 px-4 py-3 text-[13.5px] focus:border-cyan focus:outline-none"
             >
-              {["USDC", "USDT", "ETH", "DAI"].map((t) => (
-                <option key={t}>{t}</option>
+              {SAFESEND_TOKENS.map((t) => (
+                <option key={t.symbol} value={t.symbol}>
+                  {t.symbol}
+                </option>
               ))}
             </select>
+            <div className="mt-1.5 text-[11px] text-muted-foreground">
+              Arbitrum Sepolia pilot token
+            </div>
           </div>
           <div>
             <Label>Amount</Label>
@@ -96,7 +106,14 @@ export function ComposeSafeSendPage() {
 
         <div>
           <Label>Delay before release · {delay}h</Label>
-          <input type="range" min={1} max={72} value={delay} onChange={(e) => setDelay(Number(e.target.value))} className="w-full accent-cyan" />
+          <input
+            type="range"
+            min={1}
+            max={72}
+            value={delay}
+            onChange={(e) => setDelay(Number(e.target.value))}
+            className="w-full accent-cyan"
+          />
           <div className="mt-1 flex justify-between font-mono text-[10.5px] text-muted-foreground">
             <span>1h</span>
             <span>24h</span>
@@ -106,7 +123,14 @@ export function ComposeSafeSendPage() {
 
         <div>
           <Label>Cancel window · {cancelWindow}h</Label>
-          <input type="range" min={1} max={72} value={cancelWindow} onChange={(e) => setCancelWindow(Number(e.target.value))} className="w-full accent-cyan" />
+          <input
+            type="range"
+            min={1}
+            max={72}
+            value={cancelWindow}
+            onChange={(e) => setCancelWindow(Number(e.target.value))}
+            className="w-full accent-cyan"
+          />
         </div>
 
         <div>
@@ -122,7 +146,7 @@ export function ComposeSafeSendPage() {
 
       <div className="mt-8 flex items-center justify-between border-t border-[var(--border)] pt-6">
         <div className="text-[12px] text-muted-foreground">
-          Gas est. <span className="font-mono text-foreground">0.0021 ETH</span>
+          Gas and SafeSend fee are shown before signature.
         </div>
         <button
           onClick={onContinue}

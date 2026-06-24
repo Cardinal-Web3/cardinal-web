@@ -1,11 +1,14 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useSafeSends } from "@/lib/safesend-store";
-import { SIGNAL_LABELS, scanTransaction, VERDICT_DISPLAY, type ScanResult, type Verdict } from "@/lib/mock-scan";
+import { SIGNAL_LABELS, VERDICT_DISPLAY, type Verdict } from "@/lib/mock-scan";
 
-const STYLE: Record<Verdict, { ring: string; bg: string; text: string; glow: string; label: string; desc: string; cta: string }> = {
+const STYLE: Record<
+  Verdict,
+  { ring: string; bg: string; text: string; glow: string; label: string; desc: string; cta: string }
+> = {
   ALLOW: {
     ring: "border-emerald/60",
     bg: "bg-emerald/10",
@@ -39,24 +42,19 @@ export function VerdictSafeSendPage() {
   const router = useRouter();
   const { drafts } = useSafeSends();
   const d = drafts["new"];
-  const [scan, setScan] = useState<ScanResult | null>(null);
+  const scan = d?.scan;
 
   useEffect(() => {
     if (!d?.recipient || !d?.amount) {
       router.replace("/app/new");
       return;
     }
-    setScan(
-      scanTransaction({
-        recipient: d.recipient,
-        amount: d.amount,
-        token: d.token ?? "USDC",
-      }),
-    );
+    if (!d.scan) router.replace("/app/new/scan");
   }, [d, router]);
 
   if (!scan || !d) return null;
   const v = STYLE[scan.verdict];
+  const canProceed = scan.verdict !== "BLOCK";
 
   return (
     <div className={`surface-card relative overflow-hidden p-7 ${v.glow}`}>
@@ -69,6 +67,14 @@ export function VerdictSafeSendPage() {
               {v.label}
             </div>
             <p className="mt-2 max-w-md text-[13.5px] text-muted-foreground">{v.desc}</p>
+            <div className="mt-4 flex flex-wrap gap-2">
+              <MetaPill label="Mode" value={scan.mode === "live" ? "Live backend" : "Demo"} />
+              {scan.requestId && <MetaPill label="Request" value={scan.requestId} />}
+              {scan.riskLevel && <MetaPill label="Risk" value={scan.riskLevel} />}
+              {typeof scan.networkValid === "boolean" && (
+                <MetaPill label="Network" value={scan.networkValid ? "Valid" : "Mismatch"} />
+              )}
+            </div>
           </div>
           <div className={`rounded-2xl border ${v.ring} ${v.bg} px-5 py-4 text-center`}>
             <div className="eyebrow mb-1">Risk score</div>
@@ -80,20 +86,41 @@ export function VerdictSafeSendPage() {
         <div className="mt-7">
           <div className="eyebrow mb-3">Findings</div>
           <div className="space-y-2">
-            {scan.findings.map((f, i) => (
-              <div key={i} className="flex items-start gap-3 rounded-xl border border-[var(--border)] bg-surface-elevated/70 px-4 py-3">
-                <span className={`mt-1 inline-flex h-1.5 w-1.5 flex-none rounded-full ${f.severity === "high" ? "bg-red" : f.severity === "med" ? "bg-amber" : f.severity === "low" ? "bg-cyan" : "bg-emerald"}`} />
-                <div className="min-w-0 flex-1">
-                  <div className="flex items-center justify-between">
-                    <div className="font-mono text-[11px] uppercase tracking-wider text-muted-foreground">
-                      {SIGNAL_LABELS[f.signal]}
+            {scan.findings.length > 0 ? (
+              scan.findings.map((f, i) => (
+                <div
+                  key={i}
+                  className="flex items-start gap-3 rounded-xl border border-[var(--border)] bg-surface-elevated/70 px-4 py-3"
+                >
+                  <span
+                    className={`mt-1 inline-flex h-1.5 w-1.5 flex-none rounded-full ${f.severity === "high" ? "bg-red" : f.severity === "med" ? "bg-amber" : f.severity === "low" ? "bg-cyan" : "bg-emerald"}`}
+                  />
+                  <div className="min-w-0 flex-1">
+                    <div className="flex items-center justify-between gap-4">
+                      <div className="font-mono text-[11px] uppercase tracking-wider text-muted-foreground">
+                        {SIGNAL_LABELS[f.signal]}
+                      </div>
+                      <div
+                        className={`font-mono text-[10.5px] uppercase tracking-wider ${f.severity === "high" ? "text-red" : f.severity === "med" ? "text-amber" : f.severity === "low" ? "text-cyan" : "text-emerald"}`}
+                      >
+                        {f.severity}
+                      </div>
                     </div>
-                    <div className={`font-mono text-[10.5px] uppercase tracking-wider ${f.severity === "high" ? "text-red" : f.severity === "med" ? "text-amber" : f.severity === "low" ? "text-cyan" : "text-emerald"}`}>
-                      {f.severity}
-                    </div>
+                    <div className="mt-1 text-[13px] text-foreground/90">{f.text}</div>
                   </div>
-                  <div className="mt-1 text-[13px] text-foreground/90">{f.text}</div>
                 </div>
+              ))
+            ) : (
+              <div className="rounded-xl border border-[var(--border)] bg-surface-elevated/70 px-4 py-4 text-[13px] text-muted-foreground">
+                No risk findings were returned by the backend.
+              </div>
+            )}
+            {scan.warnings?.map((warning, i) => (
+              <div
+                key={`warning-${i}`}
+                className="rounded-xl border border-amber/25 bg-amber/10 px-4 py-3 text-[13px] text-amber"
+              >
+                {warning}
               </div>
             ))}
           </div>
@@ -116,20 +143,32 @@ export function VerdictSafeSendPage() {
               </button>
             )}
             <button
-              onClick={() => router.push("/app/new/confirm")}
+              onClick={() => {
+                if (canProceed) router.push("/app/new/confirm");
+              }}
+              disabled={!canProceed}
               className={`rounded-full px-5 py-2 text-[13.5px] font-medium transition ${
                 scan.verdict === "BLOCK"
-                  ? "border border-red/60 bg-red/10 text-red hover:bg-red/20"
+                  ? "cursor-not-allowed border border-red/60 bg-red/10 text-red opacity-70"
                   : scan.verdict === "REVIEW"
                     ? "border border-amber/60 bg-amber/10 text-amber hover:bg-amber/20"
                     : "bg-foreground text-background hover:bg-cyan"
               }`}
             >
-              {v.cta} →
+              {canProceed ? `${v.cta} →` : "Blocked by Cardinal"}
             </button>
           </div>
         </div>
       </div>
+    </div>
+  );
+}
+
+function MetaPill({ label, value }: { label: string; value: string }) {
+  return (
+    <div className="rounded-full border border-[var(--border)] bg-surface-elevated/75 px-3 py-1 font-mono text-[10.5px] uppercase tracking-wider">
+      <span className="text-muted-foreground">{label}: </span>
+      <span className="text-foreground/90">{value}</span>
     </div>
   );
 }

@@ -2,11 +2,14 @@
 
 import Lenis from "lenis";
 import "lenis/dist/lenis.css";
+import { usePathname } from "next/navigation";
 import { cancelFrame, frame, useReducedMotion } from "motion/react";
 import { useEffect, useRef, type ReactNode } from "react";
 
+/** Routes that use native browser scroll (no Lenis hijacking). */
+const LENIS_DISABLED_PATHS = ["/whitepaper"];
+
 const LENIS_OPTIONS: ConstructorParameters<typeof Lenis>[0] = {
-  /** Slower, calmer feel — default 1.2 felt too snappy */
   duration: 1.65,
   easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
   orientation: "vertical",
@@ -15,7 +18,6 @@ const LENIS_OPTIONS: ConstructorParameters<typeof Lenis>[0] = {
   wheelMultiplier: 0.82,
   touchMultiplier: 1.35,
   infinite: false,
-  /** Don't hijack horizontal carousels / nested scroll areas */
   prevent: (node) =>
     Boolean(
       node.closest("[data-lenis-prevent]") ||
@@ -24,11 +26,22 @@ const LENIS_OPTIONS: ConstructorParameters<typeof Lenis>[0] = {
 };
 
 export function SmoothScroll({ children }: { children: ReactNode }) {
+  const pathname = usePathname();
   const prefersReducedMotion = useReducedMotion();
   const lenisRef = useRef<Lenis | null>(null);
+  const lenisDisabled = LENIS_DISABLED_PATHS.some((path) => pathname.startsWith(path));
 
   useEffect(() => {
-    if (prefersReducedMotion) return;
+    const destroyLenis = () => {
+      if (!lenisRef.current) return;
+      lenisRef.current.destroy();
+      lenisRef.current = null;
+    };
+
+    if (prefersReducedMotion || lenisDisabled) {
+      destroyLenis();
+      return;
+    }
 
     const lenis = new Lenis(LENIS_OPTIONS);
     lenisRef.current = lenis;
@@ -41,10 +54,9 @@ export function SmoothScroll({ children }: { children: ReactNode }) {
 
     return () => {
       cancelFrame(onFrame);
-      lenis.destroy();
-      lenisRef.current = null;
+      destroyLenis();
     };
-  }, [prefersReducedMotion]);
+  }, [prefersReducedMotion, lenisDisabled]);
 
   return children;
 }

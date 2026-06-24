@@ -1,6 +1,7 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
-import type { ScanResult, Verdict } from "./mock-scan";
+import type { Verdict } from "./mock-scan";
+import type { ProtectionScanResult } from "./protection-api";
 
 export type SafeSendStatus =
   | "draft"
@@ -12,9 +13,16 @@ export type SafeSendStatus =
 
 export type SafeSend = {
   id: string;
+  transferId?: string;
+  txHash?: string;
+  approvalTxHash?: string;
   recipient: string;
   token: string;
+  tokenAddress?: string;
   amount: number;
+  feeAmount?: number;
+  recipientAmount?: number;
+  gasEstimateEth?: string;
   delayHours: number;
   cancelWindowHours: number;
   memo?: string;
@@ -22,13 +30,11 @@ export type SafeSend = {
   releaseAt: number;
   status: SafeSendStatus;
   verdict?: Verdict;
-  scan?: ScanResult;
+  scan?: ProtectionScanResult;
+  mode?: "demo" | "live_contract";
 };
 
-type DraftInput = Omit<
-  SafeSend,
-  "id" | "createdAt" | "releaseAt" | "status"
->;
+type DraftInput = Omit<SafeSend, "id" | "createdAt" | "releaseAt" | "status">;
 
 type State = {
   drafts: Record<string, Partial<DraftInput>>;
@@ -73,9 +79,7 @@ export const useSafeSends = create<State>()(
         })),
       cancelSend: (id) =>
         set((s) => ({
-          sends: s.sends.map((x) =>
-            x.id === id ? { ...x, status: "cancelled" } : x,
-          ),
+          sends: s.sends.map((x) => (x.id === id ? { ...x, status: "cancelled" } : x)),
         })),
     }),
     { name: "cardinal-safesends" },

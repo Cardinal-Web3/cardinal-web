@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { motion } from "motion/react";
+import { useEffect } from "react";
 import { Logo } from "@/components/site/Logo";
 import { ThemeToggle } from "@/components/site/ThemeToggle";
 import { WalletButton } from "@/components/site/WalletButton";
@@ -15,8 +16,12 @@ const NAV = [
 
 export function AppShell({ children }: { children?: React.ReactNode }) {
   const pathname = usePathname();
-  const { status, address } = useWallet();
+  const { status, address, refresh } = useWallet();
   const connected = status === "connected" && address;
+
+  useEffect(() => {
+    void refresh();
+  }, [refresh]);
 
   return (
     <div className="relative grid min-h-screen md:grid-cols-[240px_1fr]">
