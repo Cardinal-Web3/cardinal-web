@@ -44,7 +44,7 @@ export function useScrollSpy(ids: readonly string[]): {
 
   const activeIdRef = useRef(activeId);
   const lockUntilRef = useRef(0);
-  const rafRef = useRef<number>();
+  const rafRef = useRef<number | undefined>(undefined);
 
   const commitActive = useCallback((next: string) => {
     if (!next || next === activeIdRef.current) return;
