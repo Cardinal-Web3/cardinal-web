@@ -15,6 +15,9 @@ const NAV = [
   { label: "Pilot", to: "/pilot" },
 ];
 
+// API docs are desktop-only; omit from the mobile menu (still reachable via footer).
+const MOBILE_NAV = NAV.filter((n) => n.to !== "/api-docs");
+
 export function Nav() {
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
@@ -99,7 +102,7 @@ export function Nav() {
               className="absolute inset-x-3 top-[4.5rem] origin-top rounded-3xl border border-[var(--border)] bg-background/95 p-3 shadow-[0_20px_60px_-20px_rgba(0,0,0,0.4)] backdrop-blur-2xl sm:inset-x-4 md:hidden"
             >
               <div className="flex flex-col gap-0.5">
-                {NAV.map((n, i) => (
+                {MOBILE_NAV.map((n, i) => (
                   <motion.div
                     key={n.to}
                     initial={{ opacity: 0, x: -8 }}

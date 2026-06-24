@@ -2,12 +2,9 @@
 
 import Link from "next/link";
 import { motion, useReducedMotion } from "motion/react";
-import { useCallback, useLayoutEffect, useRef, useState } from "react";
+import { useState } from "react";
 import { SiteLayout } from "@/components/layout/site-layout";
 import { useScrollSpy } from "@/hooks/use-scroll-spy";
-
-const TOC_SPRING_SOFT = { type: "spring" as const, stiffness: 240, damping: 32, mass: 1.05 };
-const TOC_INDICATOR_EASE = "cubic-bezier(0.4, 0, 0.2, 1)";
 
 const SECTIONS = [
   { id: "intent", label: "Intent" },
@@ -63,14 +60,18 @@ const verdicts = [
 
 export function ApiDocsPage() {
   const { activeId, scrollToSection } = useScrollSpy(SECTION_IDS);
+  const reduceMotion = useReducedMotion();
+  const indicatorTransition = reduceMotion
+    ? { duration: 0 }
+    : { type: "spring" as const, stiffness: 360, damping: 32, mass: 0.9 };
 
   return (
-    <SiteLayout docs>
-      <main className="relative min-h-screen overflow-hidden px-5 pb-24 pt-28 sm:px-8 lg:px-10">
+    <SiteLayout>
+      <MobileApiNotice />
+
+      <main className="relative hidden min-h-screen overflow-hidden px-5 pb-24 pt-28 sm:px-8 lg:block lg:px-10">
         <div className="grid-bg pointer-events-none absolute inset-0 opacity-45 dark:opacity-25" />
         <div className="pointer-events-none absolute left-1/2 top-28 h-[520px] w-[520px] -translate-x-1/2 rounded-full bg-cyan/10 blur-[120px]" />
-
-        <MobileToc activeId={activeId} onNavigate={scrollToSection} />
 
         <div className="relative mx-auto grid max-w-7xl gap-12 lg:grid-cols-[260px_minmax(0,1fr)]">
           <aside className="hidden lg:block">
@@ -78,7 +79,7 @@ export function ApiDocsPage() {
               <div className="font-mono text-[10px] uppercase tracking-[0.22em] text-muted-foreground">
                 Docs map
               </div>
-              <nav className="mt-6 space-y-1 border-l border-[var(--border)] pl-3">
+              <nav className="relative mt-6 space-y-0.5 border-l border-[var(--border)] pl-3">
                 {SECTIONS.map((item) => {
                   const isActive = item.id === activeId;
                   return (
@@ -87,13 +88,27 @@ export function ApiDocsPage() {
                       type="button"
                       aria-current={isActive ? "true" : undefined}
                       onClick={() => scrollToSection(item.id)}
-                      className={`relative -ml-3 block w-full border-l-2 py-1.5 pl-3 text-left font-mono text-[11px] uppercase tracking-[0.16em] transition ${
-                        isActive
-                          ? "border-cyan text-cyan"
-                          : "border-transparent text-muted-foreground hover:translate-x-1 hover:text-foreground"
+                      className={`group relative -ml-3 block w-full rounded-r-lg py-2 pl-3 pr-2 text-left font-mono text-[11px] uppercase tracking-[0.16em] transition-colors duration-300 ${
+                        isActive ? "text-cyan" : "text-muted-foreground hover:text-foreground"
                       }`}
                     >
-                      {item.label}
+                      {isActive && (
+                        <motion.span
+                          layoutId="docs-active-bg"
+                          className="absolute inset-y-0 left-0 right-0 rounded-r-lg bg-cyan/[0.06]"
+                          transition={indicatorTransition}
+                        />
+                      )}
+                      {isActive && (
+                        <motion.span
+                          layoutId="docs-active-bar"
+                          className="absolute inset-y-1 left-0 w-[2px] rounded-full bg-cyan shadow-[0_0_10px_oklch(0.82_0.13_210/0.55)]"
+                          transition={indicatorTransition}
+                        />
+                      )}
+                      <span className="relative inline-block transition-transform duration-300 group-hover:translate-x-0.5">
+                        {item.label}
+                      </span>
                     </button>
                   );
                 })}
@@ -297,109 +312,75 @@ npm run dev`}
   );
 }
 
-function MobileToc({
-  activeId,
-  onNavigate,
-}: {
-  activeId: string;
-  onNavigate: (id: string) => void;
-}) {
+function MobileApiNotice() {
   const reduceMotion = useReducedMotion();
-  const stripRef = useRef<HTMLDivElement>(null);
-  const btnRefs = useRef<Map<string, HTMLButtonElement>>(new Map());
-  const [indicator, setIndicator] = useState({ x: 0, width: 0, ready: false });
+  const [copied, setCopied] = useState(false);
 
-  const syncIndicator = useCallback(() => {
-    const strip = stripRef.current;
-    const btn = btnRefs.current.get(activeId);
-    if (!strip || !btn) return;
-    setIndicator({ x: btn.offsetLeft, width: btn.offsetWidth, ready: true });
-  }, [activeId]);
-
-  useLayoutEffect(() => {
-    const strip = stripRef.current;
-    const btn = btnRefs.current.get(activeId);
-    if (!strip || !btn) return;
-
-    const targetLeft = btn.offsetLeft - strip.clientWidth / 2 + btn.offsetWidth / 2;
-    strip.scrollTo({
-      left: Math.max(0, targetLeft),
-      behavior: reduceMotion ? "auto" : "smooth",
-    });
-    syncIndicator();
-  }, [activeId, reduceMotion, syncIndicator]);
-
-  useLayoutEffect(() => {
-    syncIndicator();
-    const raf = requestAnimationFrame(syncIndicator);
-    document.fonts?.ready.then(syncIndicator);
-    window.addEventListener("resize", syncIndicator);
-    return () => {
-      cancelAnimationFrame(raf);
-      window.removeEventListener("resize", syncIndicator);
-    };
-  }, [syncIndicator]);
-
-  const indicatorTransition = reduceMotion
-    ? "none"
-    : `transform 0.25s ${TOC_INDICATOR_EASE}, width 0.25s ${TOC_INDICATOR_EASE}`;
+  const copyLink = async () => {
+    try {
+      await navigator.clipboard.writeText(window.location.href);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    } catch {
+      setCopied(false);
+    }
+  };
 
   return (
-    <nav
-      aria-label="API docs sections"
-      className="sticky top-[4.5rem] z-40 -mx-5 mb-8 border-b border-[var(--border)] bg-background/90 backdrop-blur-xl sm:-mx-8 lg:hidden"
-    >
-      <p className="px-5 pt-2.5 font-mono text-[9px] uppercase tracking-[0.2em] text-muted-foreground/60 sm:px-8">
-        On this page
-      </p>
-      <div className="relative px-5 pb-2 pt-1 sm:px-8">
-        <div
-          aria-hidden
-          className="pointer-events-none absolute inset-y-0 left-0 z-10 w-5 bg-gradient-to-r from-background/95 to-transparent sm:w-8"
-        />
-        <div
-          aria-hidden
-          className="pointer-events-none absolute inset-y-0 right-0 z-10 w-5 bg-gradient-to-l from-background/95 to-transparent sm:w-8"
-        />
-        <div
-          ref={stripRef}
-          className="relative flex gap-0.5 overflow-x-auto [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
-        >
-          <span
-            aria-hidden
-            className="pointer-events-none absolute bottom-0 left-0 h-0.5 rounded-full bg-cyan shadow-[0_0_10px_oklch(0.82_0.13_210/0.35)] will-change-transform"
-            style={{
-              transform: `translateX(${indicator.x}px)`,
-              width: indicator.ready ? indicator.width : 0,
-              opacity: indicator.ready ? 1 : 0,
-              transition: indicatorTransition,
-            }}
-          />
-          {SECTIONS.map((section) => {
-            const isActive = section.id === activeId;
-            return (
-              <motion.button
-                key={section.id}
-                ref={(el) => {
-                  if (el) btnRefs.current.set(section.id, el);
-                  else btnRefs.current.delete(section.id);
-                }}
-                type="button"
-                aria-current={isActive ? "true" : undefined}
-                onClick={() => onNavigate(section.id)}
-                animate={{ opacity: reduceMotion ? 1 : isActive ? 1 : 0.5 }}
-                transition={reduceMotion ? { duration: 0 } : TOC_SPRING_SOFT}
-                className={`shrink-0 whitespace-nowrap px-3 py-2.5 font-mono text-[11px] uppercase tracking-[0.14em] leading-none ${
-                  isActive ? "font-semibold text-cyan" : "font-normal text-muted-foreground"
-                }`}
-              >
-                {section.label}
-              </motion.button>
-            );
-          })}
+    <main className="relative flex min-h-[100svh] flex-col items-center justify-center overflow-hidden px-6 pb-24 pt-28 text-center lg:hidden">
+      <div className="grid-bg pointer-events-none absolute inset-0 opacity-40 dark:opacity-20" />
+      <div className="pointer-events-none absolute left-1/2 top-1/3 h-[420px] w-[420px] -translate-x-1/2 rounded-full bg-cyan/10 blur-[120px]" />
+
+      <motion.div
+        initial={reduceMotion ? false : { opacity: 0, y: 16 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+        className="relative mx-auto flex w-full max-w-sm flex-col items-center"
+      >
+        <div className="inline-flex items-center gap-2 rounded-full border border-[var(--border)] bg-surface-elevated/70 px-3 py-1.5 font-mono text-[10px] uppercase tracking-[0.18em] text-muted-foreground">
+          <span className="h-1.5 w-1.5 animate-pulse-soft rounded-full bg-cyan shadow-[0_0_14px_oklch(0.82_0.13_210)]" />
+          Cardinal Protection API
         </div>
-      </div>
-    </nav>
+
+        <div className="relative mt-8 grid h-16 w-16 place-items-center rounded-2xl border border-[var(--border-strong)] bg-surface-elevated/70">
+          <div className="pointer-events-none absolute inset-0 rounded-2xl bg-cyan/[0.06]" />
+          <svg viewBox="0 0 24 24" className="relative h-7 w-7 text-cyan" fill="none" aria-hidden>
+            <rect x="2.5" y="4" width="19" height="13" rx="2" stroke="currentColor" strokeWidth="1.6" />
+            <path d="M9 21h6M12 17v4" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
+          </svg>
+        </div>
+
+        <h1 className="mt-7 font-display text-[clamp(28px,9vw,40px)] leading-[1.02] tracking-[-0.03em]">
+          Best viewed on desktop
+        </h1>
+        <p className="mt-3 text-[14.5px] leading-relaxed text-muted-foreground">
+          The Protection API reference is built for wide screens — code samples,
+          payload tables, and the live Swagger console. Open this page on a
+          desktop browser for the full documentation.
+        </p>
+
+        <div className="mt-8 flex w-full flex-col gap-2.5">
+          <button
+            type="button"
+            onClick={copyLink}
+            className="inline-flex w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 py-3 text-[13.5px] font-medium text-background transition hover:bg-cyan"
+          >
+            {copied ? "Link copied" : "Copy page link"}
+            <span aria-hidden>{copied ? "✓" : "⧉"}</span>
+          </button>
+          <Link
+            href="/"
+            className="inline-flex w-full items-center justify-center rounded-full border border-[var(--border-strong)] bg-background/30 px-5 py-3 text-[13.5px] text-foreground transition hover:border-cyan hover:text-cyan"
+          >
+            Back to home
+          </Link>
+        </div>
+
+        <p className="mt-7 font-mono text-[10px] uppercase tracking-[0.16em] text-muted-foreground/60">
+          cardinal://protect · api reference
+        </p>
+      </motion.div>
+    </main>
   );
 }
 
