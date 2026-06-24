@@ -237,10 +237,11 @@ npm run format   # Format project files
 
 Useful project notes:
 
-- `BACKEND_INTEGRATION.md`
-- `SAFESEND_INTEGRATION.md`
-- `DESIGN.md`
-- `.env.example`
+- [Backend integration](./BACKEND_INTEGRATION.md)
+- [Backend API future implementation](./BACKEND_API_FUTURE_IMPLEMENTATION.md)
+- [SafeSend integration](./SAFESEND_INTEGRATION.md)
+- [Design system](./DESIGN.md)
+- [Environment example](./.env.example)
 
 ## Pilot Status
 
@@ -275,4 +276,3 @@ Cardinal is becoming the protection layer that wallets, exchanges, marketplaces,
 ```text
 Scan. Settle. Protect.
 ```
-

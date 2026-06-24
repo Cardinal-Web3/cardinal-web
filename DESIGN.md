@@ -1,294 +1,617 @@
-# Cardinal — Design & Engineering Reference
+# Cardinal Design System
 
-> The protection layer between users and blockchain transactions.
-> This document is the single source of truth for any LLM or human picking up the project.
+Design and implementation rules for the Cardinal web MVP.
 
----
+This document is written for humans and LLM coding agents. Before adding new screens such as escrow, partner dashboards, transaction history, billing, or expanded SafeSend flows, read this file and follow the same visual language.
 
-## 1. Brand
+## Product Feeling
 
-**Voice:** confident, technical, restrained. We don't sell with hype — we sell with proof. Lines like *"Before you sign, Cardinal scans"* over *"Revolutionary Web3 security!"*.
+Cardinal should feel like security infrastructure, not a hype landing page.
 
-**Logo — "Cardinal Aegis":**
-- Hexagonal aperture (6 facets = 6 scan signals)
-- 4 micro outward arrows = protected outbound flow
-- Cyan → violet gradient stroke
-- Inner core dot with cyan glow
-- Wordmark `Cardinal` in Geist 600, -0.035em tracking
+The UI should communicate:
 
-Lives in `src/components/site/Logo.tsx` (`LogoMark` for icon-only, used in favicon source and any cramped layout).
+- protection before signature
+- calm technical confidence
+- enterprise-grade trust
+- fast transaction decisioning
+- Web3-native polish without visual noise
 
-**Do / Don't**
-- ✅ Use `LogoMark` on dark backgrounds with cyan glow.
-- ✅ Keep the gradient direction NW→SE.
-- ❌ Never put the logo on a busy photo without a tinted scrim.
-- ❌ Never recolor the mark to a single flat color outside the brand palette.
+Good Cardinal screens feel like a control room: quiet, precise, premium, and readable.
 
-**Favicon set** (`public/`): `favicon.svg` (theme-aware vector). Add raster fallbacks (`favicon-32.png`, `apple-touch-icon.png`, `og-cover.png`) when generated.
+Avoid:
 
----
+- generic SaaS cards everywhere
+- cartoon crypto visuals
+- random purple gradients
+- fake “AI magic” language
+- noisy 3D scenes
+- huge empty sections that do not explain product value
 
-## 2. Color tokens (OKLCH)
+## Brand Sentence
 
-All colors live in `src/styles.css` as CSS variables. **Never** hardcode hex/rgb in components.
+Use this as the design anchor:
 
-| Token | Light | Dark | Usage |
-| --- | --- | --- | --- |
-| `--background` | `0.985 0.004 250` | `0.14 0.01 250` | Page background |
-| `--surface` | `0.97 0.006 250` | `0.185 0.012 250` | Cards |
-| `--surface-elevated` | `1 0 0` | `0.22 0.014 250` | Buttons, popovers |
-| `--foreground` | `0.18 0.02 260` | `0.975 0.005 250` | Primary text |
-| `--muted-foreground` | `0.48 0.02 260` | `0.65 0.02 250` | Secondary text |
-| `--cyan` | `0.58 0.14 210` | `0.82 0.13 210` | Primary brand / scan signal |
-| `--violet` | `0.52 0.2 290` | `0.66 0.18 290` | Accent / second brand stop |
-| `--emerald` | `0.58 0.16 155` | `0.76 0.16 155` | ALLOW / success |
-| `--amber` | `0.68 0.17 75` | `0.82 0.16 75` | REVIEW / pilot |
-| `--red` | `0.58 0.22 25` | `0.67 0.22 25` | BLOCK / threat |
-| `--border` | foreground @ 8% | white @ 8% | hairlines |
-| `--border-strong` | foreground @ 16% | white @ 14% | buttons, dividers |
+```text
+Cardinal scans transaction intent before value moves.
+```
 
-**Composite tokens:** `--gradient-brand`, `--gradient-aurora`, `--gradient-line`, `--shadow-elevated`, `--shadow-3d`, `--shadow-glow-{cyan,emerald,red,amber}`, `--ring-aurora`.
+Secondary language:
 
----
+```text
+Scan. Settle. Protect.
+Protection before signature.
+Trust infrastructure for digital asset transactions.
+```
 
-## 3. Typography
+## Visual Identity
 
-| Role | Family | Notes |
-| --- | --- | --- |
-| Display | Geist 500 | `font-display` utility, tracking -0.035em |
-| Body | Geist 400 | `--font-sans`, ss01 + cv11 features |
-| Mono | JetBrains Mono | tx hashes, eyebrows, telemetry, addresses |
+Cardinal uses a dark security-console aesthetic with enough light-mode support for product demos.
 
-Loaded with a `<link>` in `src/routes/__root.tsx` head — **never** `@import` a remote URL in `styles.css` (Lightning CSS resolves from the filesystem).
+Core visual ingredients:
 
-Hierarchy: `clamp(44px,7vw,92px)` hero · `clamp(34px,5vw,60px)` section H2 · `18–20px` H3 · `13–16px` body · `11px` eyebrow.
+- deep ink backgrounds
+- cyan signal accents
+- violet secondary accents
+- amber review state
+- emerald safe state
+- red block state
+- fine grid backgrounds
+- soft aurora glows
+- mono telemetry labels
+- large restrained headlines
+- rounded pill navigation
+- precise borders and hairlines
 
----
+The design should never become one-note purple or one-note blue. Cyan is a signal color, not the whole palette.
 
-## 4. Spacing · radii · shadows
+## Logo
 
-- Radii: `--radius` 10px, `-sm` 6, `-md` 8, `-lg` 10, `-xl` 14, `-2xl` 18.
-- Section vertical rhythm: `py-28` (112px) on marketing, `py-8` in app.
-- Container: `max-w-6xl` marketing, `max-w-3xl` text.
-- Shadows: `--shadow-elevated` cards, `--shadow-3d` hero card, glow shadows for verdict states.
+Use the Cardinal logo from:
 
----
+```text
+src/components/site/Logo.tsx
+public/favicon.svg
+```
 
-## 5. Motion vocabulary
+Rules:
 
-Library: `motion/react`. Easing reused across the site:
+- Use `LogoMark` where space is tight.
+- Use `Logo` for nav/header contexts.
+- Do not redraw the logo manually.
+- Do not stretch, recolor, or place it on busy backgrounds without a dark/light scrim.
+- Keep enough empty space around the mark.
+
+## Typography
+
+Primary font:
+
+```text
+Geist
+```
+
+Mono font:
+
+```text
+JetBrains Mono
+```
+
+Use Geist for readable product copy. Use JetBrains Mono for:
+
+- transaction IDs
+- wallet addresses
+- section eyebrows
+- status labels
+- telemetry
+- chain/network labels
+- API examples
+
+Typography rules:
+
+- Hero headlines can be large.
+- App cards must use tighter headings.
+- Avoid negative letter spacing except where already defined in existing hero styles.
+- Do not scale text directly with viewport width in new compact UI.
+- Do not use all-caps paragraphs.
+- Eyebrows can be uppercase mono with wide tracking.
+
+Good examples:
+
+```text
+CARDINAL VERDICT
+PROTECTION ENGINE
+PILOT LIVE
+RISK: LOW
+NETWORK: VALID
+```
+
+## Color Rules
+
+Use CSS tokens from `src/styles.css`. Do not hardcode random colors in components unless you are drawing a brand wallet icon or external logo.
+
+Primary semantic colors:
+
+| Meaning | Color Direction |
+| --- | --- |
+| Brand signal | Cyan |
+| Secondary signal | Violet |
+| Safe / allow | Emerald |
+| Review / hold | Amber |
+| Block / threat | Red |
+| Neutral surface | Tokenized surface/background |
+
+Verdict mapping:
+
+| Verdict | UI Treatment |
+| --- | --- |
+| `ALLOW` | Emerald text, subtle glow, calm copy |
+| `REVIEW` | Amber text, visible but not alarming |
+| `BLOCK` | Red text, clear warning, no proceed CTA |
+
+Never rely on color alone. Always include plain English labels.
+
+## Surfaces
+
+Cardinal surfaces should look solid and engineered.
+
+Use:
+
+- subtle borders
+- soft blur only for modal/backdrop contexts
+- low-opacity grid layers
+- restrained shadows
+- 8-24px radius depending on component size
+- clear internal spacing
+
+Avoid:
+
+- nested cards inside cards
+- excessive glassmorphism
+- heavy glow on every element
+- big floating panels without purpose
+- decorative blobs/orbs
+
+Recommended surface types:
+
+| Surface | Usage |
+| --- | --- |
+| Pill | Nav, status, small metadata |
+| Panel | App steps, API docs examples, wallet modal |
+| Band | Full-width marketing sections |
+| Console | Scan/verdict/API code sections |
+| Table | Fee breakdown, API response fields, history |
+
+## Motion
+
+Motion should make the product feel alive, not slow.
+
+Use:
+
+- fade + slight rise on entry
+- subtle line/progress animations
+- soft count-up for metrics
+- gentle hover movement
+- modal spring scale-in
+- scroll reveal only when it improves comprehension
+
+Avoid:
+
+- heavy WebGL on first load
+- infinite aggressive animation
+- large parallax that makes reading difficult
+- scroll hijacking that feels sticky or jittery
+- motion that blocks quick app use
+
+Preferred easing:
 
 ```ts
 const EASE = [0.22, 1, 0.36, 1] as const;
 ```
 
-| Pattern | Where | Durations |
-| --- | --- | --- |
-| Page enter/exit | `PageTransition` | 420ms fade+rise (8px) |
-| Section reveal | `<Reveal>` (Intersection, `-80px`) | 700ms, 60ms child stagger |
-| Hero headline | Word mask reveal | 700ms, 80ms per word |
-| Numbers | `<CountUp>` (Intersection, threshold 0.4) | 1400ms cubic ease-out |
-| Card tilt | `useTilt` | spring 150/18, max 10° |
-| Scan border-beam | conic gradient rotation | 8s linear |
-| Verdict aura | SVG strokeDashoffset | 1400ms ease-out |
-| Wallet modal | scale-in spring | 280/26 |
+Performance rules:
 
-**Reduced motion:** global CSS rule kills animations under `prefers-reduced-motion: reduce`. Three.js scenes also opt out (see §6).
+- Every screen must feel responsive on a laptop.
+- Prefer CSS gradients, SVG, and lightweight motion over 3D rendering.
+- Honor `prefers-reduced-motion`.
+- Do not add Three.js/R3F unless explicitly approved and lazy-loaded.
 
----
+## Layout
 
-## 6. Visual performance rules
+Marketing pages:
 
-The MVP avoids WebGL and heavy 3D by default.
+- centered max-width content
+- large hero area
+- strong first-viewport signal
+- clear next section hint
+- full-width bands, not stacked floating cards
+- footer can be cinematic, but must remain mobile-safe
 
-- Hero ambience is CSS-only: radial gradients, grid layers, and lightweight motion primitives.
-- Do not add Three.js/R3F back into the first-load route unless there is a measured reason.
-- Any future 3D must be opt-in, lazy-loaded, disabled under `prefers-reduced-motion`, and tested on low-power laptops.
-- The app experience should prioritize responsiveness over cinematic complexity.
+App pages:
 
----
+- denser, calmer layout
+- sidebar on desktop
+- mobile-safe navigation
+- clear step state
+- no marketing fluff inside workflow
+- CTAs must be obvious
 
-## 7. Theming
+Recommended app flow layout:
 
-`src/hooks/use-theme.ts` owns state.
-
-- Defaults to system preference, then persists to `localStorage['cardinal-theme']`.
-- A blocking inline script in `RootShell` applies the class *before* React hydrates → no FOUC.
-- Switching uses `document.startViewTransition()` when available (Chrome / Edge), CSS crossfade fallback otherwise.
-- `<meta name="theme-color">` is updated on every toggle.
-- Component: `src/components/site/ThemeToggle.tsx` — animated sun/moon morph.
-
-Every component must consume tokens (`bg-surface`, `text-foreground`, `text-cyan`). Forbidden: `bg-black`, `text-white`, `bg-[#…]`.
-
----
-
-## 8. Wallet state machine
-
-`src/lib/wallet-store.ts` (Zustand + persist).
-
-```
-idle ── openModal ──► (modal open)
-       │
-       ├── connect(walletId) ──► connecting ──► connected
-       └── closeModal ──► idle
-connected ── disconnect ──► idle
+```text
+Sidebar / Header
+-> Step label
+-> Progress
+-> Main task panel
+-> Secondary details
+-> Primary CTA
 ```
 
-Persisted slice: `status`, `address`, `chain`, `wallet`.
-UI: `WalletButton` (pill in nav with `layoutId="wallet-pill"` morph) + `WalletModal` (mounted once at root). Simulated 1.1s connect latency — swap `connect()` body for `wagmi` when ready.
+## Navigation
 
----
+Main nav should remain a rounded pill with:
 
-## 9. Component recipes
+- Cardinal logo
+- key links
+- theme toggle
+- launch/app button
+- wallet button
 
-| Component | File | Purpose |
-| --- | --- | --- |
-| `Logo`, `LogoMark` | `site/Logo.tsx` | Brand mark with hover spin |
-| `Nav` | `site/Nav.tsx` | Sticky pill nav with theme + wallet |
-| `HeroScan` | `site/HeroScan.tsx` | 3D-tilt holographic scan card |
-| `ThreatMap` | `site/Sections3.tsx` | 38-node constellation + live ingest feed |
-| `FAQ` | `site/FAQ.tsx` | Accordion |
-| `CTABand` | `site/CTABand.tsx` | Pilot email capture (UI-only) |
-| `ThemeToggle` | `site/ThemeToggle.tsx` | Sun ↔ moon morph |
-| `WalletButton` / `WalletModal` | `site/WalletButton.tsx` | Connect choreography |
-| `AppShell` | `app/AppShell.tsx` | MVP layout with mobile bottom tabs |
-| `Reveal` | `motion/Reveal.tsx` | Stagger-on-view wrapper |
-| `CountUp` | `motion/CountUp.tsx` | Number animation |
-| `PageTransition` | `motion/PageTransition.tsx` | Route enter/exit |
-| Hero backdrop | `site/Hero.tsx` | CSS-only aurora/grid backdrop |
+Do not overload the nav. If a feature is experimental, place it inside the app or docs first.
 
----
+Current marketing links:
 
-## 10. Page anatomy
-
-- **`/`** Hero → Trust strip → Problem → How It Works → Protection Engine → SafeSend → Escrow → ThreatMap → Partners → Pilot → FAQ → CTA → Footer.
-- **`/safesend`** Nav → SafeSendShowcase → Escrow → Footer.
-- **`/partners`** Nav → Partners hero → Partners grid → Footer.
-- **`/pilot`** Nav → Pilot section → Email capture → Footer.
-- **`/app`** AppShell wraps:
-  - `/app` — SafeSend dashboard
-  - `/app/new` — 5-step wizard (Compose → Scan → Verdict → Confirm → Receipt)
-
----
-
-## 11. MVP store (Zustand)
-
-`src/lib/safesend-store.ts`. Key types:
-
-```ts
-type SafeSendStatus =
-  | "draft" | "scanning" | "pending_release"
-  | "released" | "cancelled" | "blocked";
+```text
+SafeSend
+Partners
+API
+Pilot
 ```
 
-Wizard mutates `drafts[key]`, then `createSend` produces a `SafeSend` with `releaseAt = createdAt + delayHours*3600_000`. Dashboard renders countdown to release; `cancelSend` flips status before release.
+Only add new links if the route has real content.
 
----
+## Wallet Modal
 
-## 12. Accessibility checklist
+Wallet modal rules:
 
-- ✅ Single H1 per route.
-- ✅ All interactive elements ≥ 44px on mobile.
-- ✅ `aria-hidden` on decorative SVGs (logo mark, threat map).
-- ✅ Focus ring uses `--color-ring` (cyan).
-- ✅ Color isn't sole signaling — every verdict carries text (ALLOW/REVIEW/BLOCK).
-- ✅ `prefers-reduced-motion` honored globally.
-- ✅ Form inputs labeled (placeholder + aria where needed).
+- MetaMask is active for pilot.
+- Other wallets may be shown as “Coming soon” only if disabled.
+- Use recognizable wallet marks, not plain colored squares.
+- Show plain instructions if MetaMask is missing or a request is pending.
+- Keep the modal compact and centered.
+- In light mode, preserve contrast and visible borders.
 
----
+Good footer copy:
 
-## 13. SEO checklist
+```text
+MetaMask required for pilot testing
+```
 
-- ✅ Per-route `head()` with unique `title` (<60 chars) + `description` (<160).
-- ✅ OG/Twitter tags per route; root provides defaults.
-- ✅ Canonical link per route.
-- ✅ `public/robots.txt` allows all + points to sitemap.
-- ✅ `public/sitemap.xml` lists every shareable route.
-- ✅ JSON-LD `SoftwareApplication` on `/`.
-- ✅ `theme-color` meta updated on theme toggle.
+Avoid:
 
----
+```text
+Connect to the future of decentralized security
+```
 
-## 14. File map — "where to change X"
+## SafeSend UI Rules
 
-| Want to change… | Edit |
+SafeSend is a protected transfer, not a generic send form.
+
+Every SafeSend screen should make the safety story clear:
+
+```text
+Create transfer
+-> Scan risk
+-> Review verdict
+-> Confirm fee and gas
+-> Lock funds
+-> Release or cancel
+```
+
+SafeSend pages should show:
+
+- chain
+- token
+- recipient
+- amount
+- Cardinal verdict
+- risk score
+- backend request ID when available
+- network validity
+- SafeSend fee
+- estimated gas
+- total lock amount
+- clear next action
+
+Do not hide fees behind vague copy. Use direct labels:
+
+```text
+Network gas estimate
+SafeSend service fee
+Amount locked
+Recipient receives
+```
+
+## Escrow UI Rules
+
+Future escrow must follow Cardinal’s existing security-first style.
+
+Escrow is not just “buyer pays seller.” It should be presented as controlled settlement:
+
+```text
+Agreement
+-> Security scan
+-> Fund escrow
+-> Delivery proof
+-> Approve / dispute
+-> Settlement
+```
+
+Escrow screens should include:
+
+- buyer
+- seller
+- asset/payment amount
+- chain/token
+- escrow terms
+- dispute window
+- arbiter status if applicable
+- security scan result
+- contract status
+- timeline
+
+Recommended escrow page structure:
+
+```text
+Header: Escrow Vault
+Status strip: Draft / Funded / Delivered / Disputed / Released
+Agreement panel
+Security verdict panel
+Settlement timeline
+Fee + gas breakdown
+Primary action
+Secondary actions
+```
+
+Design tone:
+
+- calm
+- legal/financial clarity
+- no playful language
+- every state must explain what happens next
+
+## API Docs Design Rules
+
+API docs should feel like a product surface, not raw Swagger only.
+
+Use:
+
+- short value headline
+- one clear endpoint example
+- request/response examples
+- field tables
+- decision explanation
+- link to Swagger/open API reference
+
+Avoid:
+
+- huge theory blocks
+- too many cards
+- walls of code before explaining purpose
+- vague “AI-powered” wording
+
+Docs should answer:
+
+1. What does this endpoint do?
+2. What do I send?
+3. What do I get back?
+4. How do I use the decision?
+5. What errors should I expect?
+
+## Backend Verdict Copy
+
+Keep verdict copy plain English.
+
+Examples:
+
+ALLOW:
+
+```text
+Low Risk · Proceed
+No risk findings were returned by the backend.
+```
+
+REVIEW:
+
+```text
+Review Required
+This transaction has signals that need one more look.
+```
+
+BLOCK:
+
+```text
+Blocked
+Do not sign. Cardinal found risk signals above threshold.
+```
+
+Never say:
+
+```text
+This is 100% safe.
+Guaranteed secure.
+Fraud-proof.
+```
+
+## Forms
+
+Form rules:
+
+- labels are required
+- inputs must have visible focus
+- chain/token selectors should look like product controls
+- invalid addresses need immediate explanation
+- amounts must show token units
+- paste buttons should be compact
+- CTAs should never shift layout during loading
+
+Button hierarchy:
+
+| Type | Usage |
 | --- | --- |
-| Colors / theme | `src/styles.css` (`:root` light, `.dark` dark) |
-| Logo / favicon | `src/components/site/Logo.tsx`, `public/favicon.svg` |
-| Nav links | `src/components/site/Nav.tsx` |
-| Hero copy/animation | `src/components/site/Hero.tsx`, `HeroScan.tsx` |
-| Scan signals | `src/lib/mock-scan.ts` |
-| Threat map density | `generateNodes()` in `Sections3.tsx` |
-| Wallet behavior | `src/lib/wallet-store.ts`, `WalletButton.tsx` |
-| Theme persistence | `src/hooks/use-theme.ts` |
-| Motion easings | `src/components/motion/*` |
-| Hero backdrop | `src/components/site/Hero.tsx` |
-| SEO defaults | `src/routes/__root.tsx` head |
-| Per-route SEO | each `src/routes/*.tsx` `head()` |
-| MVP nav (mobile tabs) | `src/components/app/AppShell.tsx` |
-| MVP store | `src/lib/safesend-store.ts` |
+| Primary | Main action for current step |
+| Secondary | Edit/back/reset |
+| Danger | Cancel/block/destructive |
+| Ghost | Low-emphasis utility |
 
----
+## Mobile Rules
 
-## 15. Changelog — v2 Revamp
+Mobile is first-class.
 
-**Brand**
-- New `LogoMark` (hex aperture + outward arrows + glow core).
-- Vector favicon (`public/favicon.svg`).
+Check:
 
-**Theming**
-- Full light + dark token system in `styles.css`.
-- `useTheme` + `ThemeToggle` with View Transitions API.
-- FOUC-blocking inline script in `RootShell`.
+- no horizontal overflow
+- nav does not cover hero text
+- buttons are at least 44px tall
+- wallet modal fits without clipping
+- footer does not cut off content
+- tables become stacked rows
+- code blocks can scroll horizontally
+- app sidebar becomes mobile nav
 
-**Wallet**
-- `wallet-store` (Zustand + persist) with `idle/connecting/connected/error`.
-- `WalletButton` with `layoutId` morph + `WalletModal` (blur + spring + per-wallet ring loader).
+Avoid fixed-height desktop assumptions.
 
-**Hero**
-- 3D mouse-parallax tilt (`useTilt`) on the scan card.
-- Conic-gradient animated border-beam.
-- Layered depth planes (real Z-depth, not just shadow).
-- Floating side glyphs.
-- Verdict score count-up + aura ring stroke animation.
-- Word-mask reveal headline.
-- Lazy R3F backdrop (aurora shader + 700 particles, gated by capability + viewport).
-- Trust strip with chain names.
+## Light Mode Rules
 
-**Threat map**
-- 38 zoned nodes (NA/EU/SEA clusters), 3 tiers, bezier arcs with flowing dashes.
-- Live-streaming ingest feed (rotates every 3.2s).
-- Metric tiles count up on view.
-- Legend.
+Light mode must not look washed out.
 
-**Marketing**
-- New `FAQ` section.
-- New `CTABand` with email capture (UI-only).
+Required:
 
-**MVP**
-- AppShell mobile bottom tab bar (≥ 44px targets) with `layoutId` pill.
-- Theme toggle + wallet in app header.
+- borders visible
+- map lines visible
+- cards have enough contrast
+- cyan remains readable
+- amber/red/emerald states are not too pale
+- text is not low-opacity gray on white
 
-**Motion**
-- `Reveal`, `CountUp`, `PageTransition` primitives.
-- `useSmoothNav` for fade-out before route changes.
-- Global reduced-motion respect.
+If a component looks good only in dark mode, it is unfinished.
 
-**SEO**
-- `robots.txt`, `sitemap.xml`.
-- JSON-LD on `/`.
-- Per-route canonical + OG.
+## Accessibility
 
-**Engineering**
-- Removed WebGL/R3F from the active MVP path to keep the app responsive.
-- No new runtime deps for theming, wallet, or motion.
+Required:
 
----
+- one H1 per route
+- semantic buttons/links
+- clear focus states
+- text labels alongside color states
+- readable contrast
+- reduced-motion support
+- disabled states that are visibly disabled
+- loading states with text or accessible label
 
-## 16. Roadmap
+Do not use clickable `div`s.
 
-- Real wagmi/viem wiring on top of `wallet-store`.
-- `VerdictShield` (R3F icosahedron + Fresnel) in MVP verdict page.
-- `EngineFlow` instanced beads in Protection Engine.
-- Generated PNG fallbacks for favicon + 1200×630 OG image.
-- i18n.
+## Copywriting Rules
+
+Use simple product language.
+
+Good:
+
+```text
+Cardinal checks this transaction before your wallet signs.
+SafeSend locks funds after the transaction passes review.
+This recipient has not appeared in prior activity.
+```
+
+Bad:
+
+```text
+Harness the revolutionary power of decentralized AI protection.
+```
+
+Keep copy short in the app. Marketing pages can explain more, but still stay direct.
+
+## Route Map
+
+Current user-facing routes:
+
+| Route | Design Role |
+| --- | --- |
+| `/` | Product story and trust positioning |
+| `/safesend` | SafeSend explanation |
+| `/partners` | Partner/enterprise positioning |
+| `/pilot` | Pilot entry point |
+| `/api-docs` | Protection API overview |
+| `/app` | App dashboard |
+| `/app/new` | Compose SafeSend |
+| `/app/new/scan` | Scan step |
+| `/app/new/verdict` | Verdict step |
+| `/app/new/confirm` | Fee/gas/contract confirmation |
+| `/app/new/receipt/[id]` | Receipt |
+
+Future routes should follow this naming pattern and not create duplicate experiences.
+
+## Component Ownership
+
+Important files:
+
+| Area | Files |
+| --- | --- |
+| Global styles | `src/styles.css` |
+| Site layout | `src/components/layout/site-layout.tsx` |
+| App layout | `src/components/app/AppShell.tsx` |
+| Navigation | `src/components/site/Nav.tsx` |
+| Footer | `src/components/site/Footer.tsx` |
+| Logo | `src/components/site/Logo.tsx` |
+| Wallet | `src/components/site/WalletButton.tsx`, `src/lib/wallet-store.ts` |
+| SafeSend state | `src/lib/safesend-store.ts` |
+| Backend API client | `src/lib/protection-api.ts` |
+| SafeSend contract | `src/lib/safesend-contract.ts` |
+| API docs page | `src/components/pages/ApiDocsPage.tsx` |
+| App pages | `src/components/pages/app/*` |
+
+## Implementation Rules For LLMs
+
+When building a new Cardinal screen:
+
+1. Inspect existing pages first.
+2. Reuse existing tokens and utilities.
+3. Keep visual density similar to nearby screens.
+4. Do not introduce a new color palette.
+5. Do not add a new animation library.
+6. Do not add heavy 3D or WebGL.
+7. Make dark and light mode both readable.
+8. Make mobile responsive before finishing.
+9. Keep warnings in plain English.
+10. Preserve backend response shape unless intentionally versioning.
+
+## Quality Bar
+
+Before saying a design task is done:
+
+- run the app
+- check desktop width
+- check mobile width
+- check light mode
+- check dark mode
+- check hover/focus states
+- confirm no text overlaps
+- confirm no horizontal scroll
+- confirm build still passes
+
+## Current MVP Direction
+
+Cardinal’s next product work should extend the same design system into:
+
+- escrow creation
+- escrow detail/status page
+- transaction history
+- fee and gas reconciliation
+- richer API docs
+- partner usage dashboard
+- backend intelligence results
+
+Every future feature should keep the same product story:
+
+```text
+Cardinal protects the user before value moves.
+```
+
