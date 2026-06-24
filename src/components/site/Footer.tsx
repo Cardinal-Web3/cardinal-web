@@ -91,7 +91,7 @@ function FooterPanel({
   const sitemapY = useTransform(progress, [isSlow ? 0.72 : 0.88, isSlow ? 0.96 : 0.98], [16, 0]);
 
   return (
-    <div className="relative flex h-full min-h-0 flex-col overflow-hidden">
+    <div className="relative flex h-full min-h-0 flex-1 flex-col overflow-hidden">
       <div className="grid-bg pointer-events-none absolute inset-0 opacity-[0.35] dark:opacity-[0.16]" />
       <div className="dot-bg pointer-events-none absolute inset-0 opacity-40 dark:opacity-[0.18]" />
       <div className="footer-glow pointer-events-none absolute inset-x-0 bottom-0 h-1/2" />
@@ -319,7 +319,7 @@ export function CurtainReveal({
  * ------------------------------------------------------------------------- */
 export function Footer() {
   return (
-    <footer className="footer-surface relative mt-24 min-h-[80svh] overflow-hidden border-t border-[var(--footer-ring)]">
+    <footer className="footer-surface relative mt-24 flex min-h-[80svh] flex-col overflow-hidden border-t border-[var(--footer-ring)]">
       <FooterPanel />
     </footer>
   );

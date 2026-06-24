@@ -1,5 +1,23 @@
+"use client";
+
 import Link from "next/link";
+import { motion, useReducedMotion } from "motion/react";
+import { useCallback, useLayoutEffect, useRef, useState } from "react";
 import { SiteLayout } from "@/components/layout/site-layout";
+import { useScrollSpy } from "@/hooks/use-scroll-spy";
+
+const TOC_SPRING_SOFT = { type: "spring" as const, stiffness: 240, damping: 32, mass: 1.05 };
+const TOC_INDICATOR_EASE = "cubic-bezier(0.4, 0, 0.2, 1)";
+
+const SECTIONS = [
+  { id: "intent", label: "Intent" },
+  { id: "endpoint", label: "Endpoint" },
+  { id: "verdict", label: "Verdict" },
+  { id: "payload", label: "Payload" },
+  { id: "run-local", label: "Run local" },
+] as const;
+
+const SECTION_IDS = SECTIONS.map((s) => s.id);
 
 const requestExample = `curl -X POST http://localhost:3001/api/check-transaction \\
   -H "Content-Type: application/json" \\
@@ -44,11 +62,15 @@ const verdicts = [
 ];
 
 export function ApiDocsPage() {
+  const { activeId, scrollToSection } = useScrollSpy(SECTION_IDS);
+
   return (
-    <SiteLayout>
+    <SiteLayout docs>
       <main className="relative min-h-screen overflow-hidden px-5 pb-24 pt-28 sm:px-8 lg:px-10">
         <div className="grid-bg pointer-events-none absolute inset-0 opacity-45 dark:opacity-25" />
         <div className="pointer-events-none absolute left-1/2 top-28 h-[520px] w-[520px] -translate-x-1/2 rounded-full bg-cyan/10 blur-[120px]" />
+
+        <MobileToc activeId={activeId} onNavigate={scrollToSection} />
 
         <div className="relative mx-auto grid max-w-7xl gap-12 lg:grid-cols-[260px_minmax(0,1fr)]">
           <aside className="hidden lg:block">
@@ -56,16 +78,25 @@ export function ApiDocsPage() {
               <div className="font-mono text-[10px] uppercase tracking-[0.22em] text-muted-foreground">
                 Docs map
               </div>
-              <nav className="mt-6 space-y-4 border-l border-[var(--border)] pl-5">
-                {["Intent", "Endpoint", "Verdict", "Payload", "Run local"].map((item) => (
-                  <a
-                    key={item}
-                    href={`#${item.toLowerCase().replace(" ", "-")}`}
-                    className="block font-mono text-[11px] uppercase tracking-[0.16em] text-muted-foreground transition hover:translate-x-1 hover:text-cyan"
-                  >
-                    {item}
-                  </a>
-                ))}
+              <nav className="mt-6 space-y-1 border-l border-[var(--border)] pl-3">
+                {SECTIONS.map((item) => {
+                  const isActive = item.id === activeId;
+                  return (
+                    <button
+                      key={item.id}
+                      type="button"
+                      aria-current={isActive ? "true" : undefined}
+                      onClick={() => scrollToSection(item.id)}
+                      className={`relative -ml-3 block w-full border-l-2 py-1.5 pl-3 text-left font-mono text-[11px] uppercase tracking-[0.16em] transition ${
+                        isActive
+                          ? "border-cyan text-cyan"
+                          : "border-transparent text-muted-foreground hover:translate-x-1 hover:text-foreground"
+                      }`}
+                    >
+                      {item.label}
+                    </button>
+                  );
+                })}
               </nav>
               <div className="mt-10 border-l border-cyan/40 pl-5">
                 <div className="font-mono text-[10px] uppercase tracking-[0.18em] text-cyan">
@@ -100,8 +131,8 @@ export function ApiDocsPage() {
             </div>
           </aside>
 
-          <div>
-            <section id="intent" className="border-b border-[var(--border)] pb-14">
+          <div className="min-w-0">
+            <section id="intent" className="scroll-mt-36 border-b border-[var(--border)] pb-14 lg:scroll-mt-28">
               <div className="flex flex-wrap items-center gap-3 font-mono text-[10.5px] uppercase tracking-[0.18em] text-muted-foreground">
                 <span className="inline-flex items-center gap-2">
                   <span className="h-1.5 w-1.5 animate-pulse-soft rounded-full bg-cyan shadow-[0_0_14px_oklch(0.82_0.13_210)]" />
@@ -141,7 +172,7 @@ export function ApiDocsPage() {
               </div>
             </section>
 
-            <section id="endpoint" className="border-b border-[var(--border)] py-16">
+            <section id="endpoint" className="scroll-mt-36 border-b border-[var(--border)] py-16 lg:scroll-mt-28">
               <SectionHeader
                 index="01"
                 title="Endpoint"
@@ -166,7 +197,7 @@ export function ApiDocsPage() {
               </div>
             </section>
 
-            <section id="verdict" className="border-b border-[var(--border)] py-16">
+            <section id="verdict" className="scroll-mt-36 border-b border-[var(--border)] py-16 lg:scroll-mt-28">
               <SectionHeader
                 index="02"
                 title="Verdict"
@@ -197,7 +228,7 @@ export function ApiDocsPage() {
               </div>
             </section>
 
-            <section id="payload" className="border-b border-[var(--border)] py-16">
+            <section id="payload" className="scroll-mt-36 border-b border-[var(--border)] py-16 lg:scroll-mt-28">
               <SectionHeader
                 index="03"
                 title="Payload"
@@ -218,7 +249,7 @@ export function ApiDocsPage() {
               </div>
             </section>
 
-            <section id="run-local" className="py-16">
+            <section id="run-local" className="scroll-mt-36 py-16 lg:scroll-mt-28">
               <SectionHeader
                 index="04"
                 title="Run local"
@@ -266,22 +297,128 @@ npm run dev`}
   );
 }
 
+function MobileToc({
+  activeId,
+  onNavigate,
+}: {
+  activeId: string;
+  onNavigate: (id: string) => void;
+}) {
+  const reduceMotion = useReducedMotion();
+  const stripRef = useRef<HTMLDivElement>(null);
+  const btnRefs = useRef<Map<string, HTMLButtonElement>>(new Map());
+  const [indicator, setIndicator] = useState({ x: 0, width: 0, ready: false });
+
+  const syncIndicator = useCallback(() => {
+    const strip = stripRef.current;
+    const btn = btnRefs.current.get(activeId);
+    if (!strip || !btn) return;
+    setIndicator({ x: btn.offsetLeft, width: btn.offsetWidth, ready: true });
+  }, [activeId]);
+
+  useLayoutEffect(() => {
+    const strip = stripRef.current;
+    const btn = btnRefs.current.get(activeId);
+    if (!strip || !btn) return;
+
+    const targetLeft = btn.offsetLeft - strip.clientWidth / 2 + btn.offsetWidth / 2;
+    strip.scrollTo({
+      left: Math.max(0, targetLeft),
+      behavior: reduceMotion ? "auto" : "smooth",
+    });
+    syncIndicator();
+  }, [activeId, reduceMotion, syncIndicator]);
+
+  useLayoutEffect(() => {
+    syncIndicator();
+    const raf = requestAnimationFrame(syncIndicator);
+    document.fonts?.ready.then(syncIndicator);
+    window.addEventListener("resize", syncIndicator);
+    return () => {
+      cancelAnimationFrame(raf);
+      window.removeEventListener("resize", syncIndicator);
+    };
+  }, [syncIndicator]);
+
+  const indicatorTransition = reduceMotion
+    ? "none"
+    : `transform 0.25s ${TOC_INDICATOR_EASE}, width 0.25s ${TOC_INDICATOR_EASE}`;
+
+  return (
+    <nav
+      aria-label="API docs sections"
+      className="sticky top-[4.5rem] z-40 -mx-5 mb-8 border-b border-[var(--border)] bg-background/90 backdrop-blur-xl sm:-mx-8 lg:hidden"
+    >
+      <p className="px-5 pt-2.5 font-mono text-[9px] uppercase tracking-[0.2em] text-muted-foreground/60 sm:px-8">
+        On this page
+      </p>
+      <div className="relative px-5 pb-2 pt-1 sm:px-8">
+        <div
+          aria-hidden
+          className="pointer-events-none absolute inset-y-0 left-0 z-10 w-5 bg-gradient-to-r from-background/95 to-transparent sm:w-8"
+        />
+        <div
+          aria-hidden
+          className="pointer-events-none absolute inset-y-0 right-0 z-10 w-5 bg-gradient-to-l from-background/95 to-transparent sm:w-8"
+        />
+        <div
+          ref={stripRef}
+          className="relative flex gap-0.5 overflow-x-auto [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+        >
+          <span
+            aria-hidden
+            className="pointer-events-none absolute bottom-0 left-0 h-0.5 rounded-full bg-cyan shadow-[0_0_10px_oklch(0.82_0.13_210/0.35)] will-change-transform"
+            style={{
+              transform: `translateX(${indicator.x}px)`,
+              width: indicator.ready ? indicator.width : 0,
+              opacity: indicator.ready ? 1 : 0,
+              transition: indicatorTransition,
+            }}
+          />
+          {SECTIONS.map((section) => {
+            const isActive = section.id === activeId;
+            return (
+              <motion.button
+                key={section.id}
+                ref={(el) => {
+                  if (el) btnRefs.current.set(section.id, el);
+                  else btnRefs.current.delete(section.id);
+                }}
+                type="button"
+                aria-current={isActive ? "true" : undefined}
+                onClick={() => onNavigate(section.id)}
+                animate={{ opacity: reduceMotion ? 1 : isActive ? 1 : 0.5 }}
+                transition={reduceMotion ? { duration: 0 } : TOC_SPRING_SOFT}
+                className={`shrink-0 whitespace-nowrap px-3 py-2.5 font-mono text-[11px] uppercase tracking-[0.14em] leading-none ${
+                  isActive ? "font-semibold text-cyan" : "font-normal text-muted-foreground"
+                }`}
+              >
+                {section.label}
+              </motion.button>
+            );
+          })}
+        </div>
+      </div>
+    </nav>
+  );
+}
+
 function FlowStrip() {
   const steps = ["transaction intent", "risk engine", "recommended action", "wallet gate"];
   return (
-    <div className="relative overflow-hidden border-y border-[var(--border)] py-8">
+    <div className="relative overflow-hidden border-y border-[var(--border)] py-4 sm:py-8">
       <div className="animate-scan pointer-events-none absolute inset-x-0 top-0 h-px bg-[var(--gradient-line)]" />
       <div className="grid gap-0 sm:grid-cols-4">
         {steps.map((step, index) => (
           <div
             key={step}
-            className="group relative border-l border-[var(--border)] px-5 py-6 first:border-l-0"
+            className="group relative border-l border-[var(--border)] px-5 py-2.5 first:border-l-0 sm:py-6"
           >
             <div className="font-mono text-[10px] uppercase tracking-[0.18em] text-cyan">
               0{index + 1}
             </div>
-            <div className="mt-4 min-h-12 text-[17px] leading-tight text-foreground">{step}</div>
-            <div className="mt-6 h-px origin-left scale-x-50 bg-cyan/40 transition duration-500 group-hover:scale-x-100" />
+            <div className="mt-1.5 text-[15px] leading-tight text-foreground sm:mt-4 sm:min-h-12 sm:text-[17px]">{step}</div>
+            <div className="mt-2.5 h-px origin-left scale-x-50 bg-cyan/40 transition duration-500 group-hover:scale-x-100 sm:mt-6" />
           </div>
         ))}
       </div>
@@ -348,7 +485,7 @@ function VerdictLane({
 
 function CodeSurface({ title, code }: { title: string; code: string }) {
   return (
-    <div className="group/code relative border-l border-[var(--border)] pl-5 [perspective:1200px]">
+    <div className="group/code relative min-w-0 border-l border-[var(--border)] pl-5 [perspective:1200px]">
       <div className="mb-3 flex items-center justify-between gap-4 transition duration-300 group-hover/code:translate-x-1">
         <div className="font-mono text-[10px] uppercase tracking-[0.18em] text-muted-foreground transition group-hover/code:text-cyan">
           {title}

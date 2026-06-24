@@ -7,7 +7,7 @@ import { cancelFrame, frame, useReducedMotion } from "motion/react";
 import { useEffect, useRef, type ReactNode } from "react";
 
 /** Routes that use native browser scroll (no Lenis hijacking). */
-const LENIS_DISABLED_PATHS = ["/whitepaper"];
+const LENIS_DISABLED_PATHS = ["/whitepaper", "/api-docs"];
 
 const LENIS_OPTIONS: ConstructorParameters<typeof Lenis>[0] = {
   duration: 1.65,
