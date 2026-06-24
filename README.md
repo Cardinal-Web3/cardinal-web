@@ -233,15 +233,23 @@ npm run lint     # Run ESLint
 npm run format   # Format project files
 ```
 
-## Repo Notes
+## Documentation
 
-Useful project notes:
+Core repo documents:
 
-- [Backend integration](./BACKEND_INTEGRATION.md)
-- [Backend API future implementation](./BACKEND_API_FUTURE_IMPLEMENTATION.md)
-- [SafeSend integration](./SAFESEND_INTEGRATION.md)
-- [Design system](./DESIGN.md)
-- [Environment example](./.env.example)
+| Document | Purpose |
+| --- | --- |
+| [Design system](./DESIGN.md) | UI/UX rules, brand, motion, layout, mobile, light/dark mode, and future LLM guidance. |
+| [Architecture](./ARCHITECTURE.md) | Frontend, backend, SafeSend, security boundary, and future escrow architecture. |
+| [Deployment](./DEPLOYMENT.md) | Local/staging/production deployment rules, env vars, and release checklist. |
+| [Testing](./TESTING.md) | Manual QA, wallet testing, SafeSend testing, backend live mode, and release checks. |
+| [Security](./SECURITY.md) | Wallet, API key, smart contract, gas/fee, and demo/live safety rules. |
+| [Contributing](./CONTRIBUTING.md) | Developer workflow, branch style, PR checklist, and required `DESIGN.md` reference. |
+| [Backend integration](./BACKEND_INTEGRATION.md) | Current frontend-to-backend scan integration. |
+| [Backend API future implementation](./BACKEND_API_FUTURE_IMPLEMENTATION.md) | Production-grade backend, adapters, intelligence layer, gas/fee roadmap, and timeline. |
+| [SafeSend integration](./SAFESEND_INTEGRATION.md) | Current SafeSend contract integration notes and production caveats. |
+| [Escrow integration](./ESCROW_INTEGRATION.md) | Future escrow product, backend, contract, and UI integration plan. |
+| [Environment example](./.env.example) | Required local environment variables. |
 
 ## Pilot Status
 
