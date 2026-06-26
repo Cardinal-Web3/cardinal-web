@@ -36,7 +36,6 @@ const footerColumns = [
     items: [
       ["Partners", "/partners"],
       ["Pilot", "/pilot"],
-      ["GitHub", "https://github.com/Cardinal-Web3"],
     ],
   },
 ];
