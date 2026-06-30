@@ -242,6 +242,7 @@ Core repo documents:
 | [Design system](./DESIGN.md) | UI/UX rules, brand, motion, layout, mobile, light/dark mode, and future LLM guidance. |
 | [Architecture](./ARCHITECTURE.md) | Frontend, backend, SafeSend, security boundary, and future escrow architecture. |
 | [Deployment](./DEPLOYMENT.md) | Local/staging/production deployment rules, env vars, and release checklist. |
+| [Frontend deployment plan](./FRONTEND_DEPLOYMENT_PLAN.md) | Infra handoff for hosting Cardinal Web, domains, env vars, Nginx, and verification. |
 | [Testing](./TESTING.md) | Manual QA, wallet testing, SafeSend testing, backend live mode, and release checks. |
 | [Security](./SECURITY.md) | Wallet, API key, smart contract, gas/fee, and demo/live safety rules. |
 | [Contributing](./CONTRIBUTING.md) | Developer workflow, branch style, PR checklist, and required `DESIGN.md` reference. |
