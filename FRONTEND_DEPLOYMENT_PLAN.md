@@ -132,6 +132,53 @@ NEXT_PUBLIC_SAFESEND_USDC_ADDRESS=<test-usdc-token-address>
 NEXT_PUBLIC_SAFESEND_DEPLOYMENT_BLOCK=<deployment-block>
 ```
 
+## 6.1 Build-Time Environment Variables
+
+These values are baked into the browser bundle because they start with `NEXT_PUBLIC_`.
+Provide them during `docker build` or the Next.js build step.
+
+```env
+NEXT_PUBLIC_SAFESEND_RPC_URL=https://sepolia-rollup.arbitrum.io/rpc
+NEXT_PUBLIC_SAFESEND_CONTRACT_ADDRESS=<safesend-contract-address>
+NEXT_PUBLIC_SAFESEND_USDC_ADDRESS=<test-usdc-token-address>
+NEXT_PUBLIC_SAFESEND_DEPLOYMENT_BLOCK=<deployment-block>
+```
+
+Docker build example:
+
+```bash
+docker build \
+  --build-arg NEXT_PUBLIC_SAFESEND_RPC_URL=https://sepolia-rollup.arbitrum.io/rpc \
+  --build-arg NEXT_PUBLIC_SAFESEND_CONTRACT_ADDRESS=<safesend-contract-address> \
+  --build-arg NEXT_PUBLIC_SAFESEND_USDC_ADDRESS=<test-usdc-token-address> \
+  --build-arg NEXT_PUBLIC_SAFESEND_DEPLOYMENT_BLOCK=<deployment-block> \
+  -t cardinal-web .
+```
+
+## 6.2 Runtime Environment Variables
+
+These values should be injected when the container starts. They must not be baked
+into the public image.
+
+```env
+NODE_ENV=production
+PORT=3004
+CARDINAL_API_URL=https://api.cardinalweb3.com
+CARDINAL_API_KEY=<production-backend-api-key>
+CARDINAL_SCAN_MODE=live
+```
+
+Docker run example:
+
+```bash
+docker run -d \
+  --name cardinal-web \
+  --restart unless-stopped \
+  -p 3004:3004 \
+  --env-file .env.production \
+  cardinal-web
+```
+
 ## 7. Environment Variable Security
 
 These must stay server-side only:
@@ -245,6 +292,13 @@ pm2 start npm --name cardinal-web -- run start
 pm2 save
 ```
 
+Docker deployment:
+
+```bash
+docker build -t cardinal-web .
+docker run -d --name cardinal-web --restart unless-stopped -p 3004:3004 --env-file .env.production cardinal-web
+```
+
 ## 12. Nginx Example
 
 If hosted on a Linux server with Nginx:
@@ -267,6 +321,21 @@ server {
 Use Certbot or another certificate manager for HTTPS.
 
 ## 13. Health Checks
+
+Uptime endpoint:
+
+```text
+GET /api/health
+```
+
+Expected response:
+
+```json
+{
+  "status": "ok",
+  "service": "Cardinal Web"
+}
+```
 
 Frontend pages to test:
 
