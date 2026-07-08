@@ -280,7 +280,7 @@ Still required before production:
 
 Cardinal is not trying to be another wallet.
 
-Cardinal is becoming the protection layer that wallets, exchanges, marketplaces, and users can ask before value moves.
+Cardinal is becoming the protection layer that wallets, exchanges, marketplaces, and users can ask before value moves..
 
 ```text
 Scan. Settle. Protect.
