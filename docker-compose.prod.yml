@@ -1,6 +1,12 @@
 services:
   frontend:
-    build: .
+    build:
+      context: .
+      args:
+        NEXT_PUBLIC_SAFESEND_RPC_URL: ${NEXT_PUBLIC_SAFESEND_RPC_URL}
+        NEXT_PUBLIC_SAFESEND_CONTRACT_ADDRESS: ${NEXT_PUBLIC_SAFESEND_CONTRACT_ADDRESS}
+        NEXT_PUBLIC_SAFESEND_USDC_ADDRESS: ${NEXT_PUBLIC_SAFESEND_USDC_ADDRESS}
+        NEXT_PUBLIC_SAFESEND_DEPLOYMENT_BLOCK: ${NEXT_PUBLIC_SAFESEND_DEPLOYMENT_BLOCK}
     container_name: cardinal-frontend
     restart: unless-stopped
     env_file:
@@ -9,7 +15,6 @@ services:
       - "3004:3004"
     networks:
       - cardinal-net
-
 networks:
   cardinal-net:
     external: true
