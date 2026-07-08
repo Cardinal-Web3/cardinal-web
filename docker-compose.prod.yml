@@ -1,38 +1,14 @@
 services:
-  postgres:
-    image: postgres:16-alpine
-    container_name: cardinal-protection-postgres
-    restart: unless-stopped
-    environment:
-      POSTGRES_USER: cardinal
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
-      POSTGRES_DB: cardinal_protection
-    volumes:
-      - cardinal-protection-postgres:/var/lib/postgresql/data
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U cardinal -d cardinal_protection"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-    networks:
-      - cardinal-net
-
-  backend:
+  frontend:
     build: .
-    container_name: cardinal-protection-backend
+    container_name: cardinal-frontend
     restart: unless-stopped
     env_file:
       - .env
     ports:
-      - "3001:3001"
-    depends_on:
-      postgres:
-        condition: service_healthy
+      - "3004:3004"
     networks:
       - cardinal-net
-
-volumes:
-  cardinal-protection-postgres:
 
 networks:
   cardinal-net:
