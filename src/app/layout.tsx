@@ -6,6 +6,7 @@ import { WalletModal } from "@/components/site/WalletButton";
 import "@/styles.css";
 
 export const metadata: Metadata = {
+  metadataBase: new URL("https://app.cardinalweb3.com"),
   title: {
     default: "Cardinal — Protect every transaction before value moves",
     template: "%s · Cardinal",

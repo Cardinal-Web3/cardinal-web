@@ -27,7 +27,7 @@ const footerColumns = [
     title: "Platform",
     items: [
       ["Protection API", "/api-docs"],
-      ["Swagger", "http://localhost:3001/docs"],
+      ["Swagger", "https://api.cardinalweb3.com/docs"],
       ["Wallet", "/app"],
     ],
   },

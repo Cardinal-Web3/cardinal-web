@@ -239,6 +239,7 @@ Core repo documents:
 
 | Document | Purpose |
 | --- | --- |
+| [Agent onboarding](./AGENTS.md) | First-read context for Codex/new developers: production status, repo map, rules, Phase 5, and required docs. |
 | [Design system](./DESIGN.md) | UI/UX rules, brand, motion, layout, mobile, light/dark mode, and future LLM guidance. |
 | [Architecture](./ARCHITECTURE.md) | Frontend, backend, SafeSend, security boundary, and future escrow architecture. |
 | [Deployment](./DEPLOYMENT.md) | Local/staging/production deployment rules, env vars, and release checklist. |

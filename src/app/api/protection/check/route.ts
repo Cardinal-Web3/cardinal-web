@@ -25,8 +25,18 @@ export async function POST(request: NextRequest) {
     return NextResponse.json(demoProtectionScan(input));
   }
 
-  const backendUrl = process.env.CARDINAL_API_URL ?? DEFAULT_BACKEND_URL;
-  const apiKey = process.env.CARDINAL_API_KEY ?? DEFAULT_API_KEY;
+  const backendUrl = requiredServerEnv("CARDINAL_API_URL", DEFAULT_BACKEND_URL);
+  const apiKey = requiredServerEnv("CARDINAL_API_KEY", DEFAULT_API_KEY);
+
+  if (!backendUrl || !apiKey) {
+    return NextResponse.json(
+      {
+        error:
+          "Cardinal Protection API is not configured. Missing CARDINAL_API_URL or CARDINAL_API_KEY.",
+      },
+      { status: 500 },
+    );
+  }
 
   try {
     const response = await fetch(`${backendUrl.replace(/\/$/, "")}/api/check-transaction`, {
@@ -69,6 +79,14 @@ export async function POST(request: NextRequest) {
 
 function scanMode() {
   return process.env.CARDINAL_SCAN_MODE === "demo" ? "demo" : "live";
+}
+
+function requiredServerEnv(name: string, localDefault: string): string | null {
+  const value = process.env[name];
+  if (value) {
+    return value;
+  }
+  return process.env.NODE_ENV === "production" ? null : localDefault;
 }
 
 function validateInput(input: ProtectionScanRequest): string | null {

@@ -15,10 +15,11 @@ const SECTIONS = [
 ] as const;
 
 const SECTION_IDS = SECTIONS.map((s) => s.id);
+const productionApiUrl = "https://api.cardinalweb3.com";
 
-const requestExample = `curl -X POST http://localhost:3001/api/check-transaction \\
+const requestExample = `curl -X POST ${productionApiUrl}/api/check-transaction \\
   -H "Content-Type: application/json" \\
-  -H "x-api-key: cardinal_demo_key" \\
+  -H "x-api-key: <your-cardinal-api-key>" \\
   -d '{
     "from_address": "0x1230000000000000000000000000000000000456",
     "to_address": "0x0000000000000000000000000000000000000001",
@@ -118,7 +119,7 @@ export function ApiDocsPage() {
                   Live reference
                 </div>
                 <a
-                  href="http://localhost:3001/docs"
+                  href={`${productionApiUrl}/docs`}
                   className="group/swagger relative mt-3 inline-flex items-center gap-3 overflow-hidden rounded-full border border-cyan/25 bg-cyan/[0.045] px-3 py-2 text-[13px] text-foreground transition duration-300 hover:border-cyan/70 hover:bg-cyan/[0.09] hover:text-cyan hover:shadow-[0_0_32px_-16px_oklch(0.82_0.13_210)]"
                 >
                   <span className="pointer-events-none absolute inset-y-0 -left-12 w-10 rotate-12 bg-cyan/20 blur-md transition duration-700 group-hover/swagger:left-full" />
@@ -277,8 +278,8 @@ export function ApiDocsPage() {
                       Backend
                     </div>
                     <p className="mt-2 text-[14px] leading-relaxed text-muted-foreground">
-                      Starts Postgres, applies migrations, seeds demo key, then serves Swagger at
-                      `localhost:3001/docs`.
+                      Starts Postgres, applies migrations, seeds a local key, then serves Swagger at
+                      `localhost:3001/docs`. Production Swagger is at `api.cardinalweb3.com/docs`.
                     </p>
                   </div>
                   <div>
